@@ -1,14 +1,18 @@
 import { k } from "../main";
 import { SceneState } from "../classes/SceneState";
+import { linearSelectorObj } from "../objects/ui/obj_linear_selector";
+import { backgroundObj } from "../objects/game/obj_background";
 
-export const loadMainMenuScene = () => k.scene("main_menu", () => {
-    const sceneState = new SceneState();
+export const loadMainMenuScene = () => k.scene("main_menu", (sceneData) => {
+    const sceneState = new SceneState("main_menu", () => ({
+        selectedOption: linearSelector.selectedOption,
+    }));
+
+    const linearSelector = k.add(linearSelectorObj());
+    linearSelector.selectedOption = sceneData.selectedOption || 0;
 
     // Background
-    k.add([
-        k.rect(k.width(), k.height()),
-        k.color(k.Color.fromHex("#ee8fcb")),
-    ]);
+    k.add(backgroundObj("#ee8fcb"));
 
     // Logo
     k.add([
@@ -50,14 +54,21 @@ export const loadMainMenuScene = () => k.scene("main_menu", () => {
         ]);
     });
 
-    // Input
-    let menuKeys = ["up", "down", "w", "s", "enter", "space"];
-    let selectedOption = 0;
+    linearSelector.menuObjects = menu.children;
 
-    k.onKeyPress((key) => {
-        if (!menuKeys.includes(key)) return;
-        if (key === "up" || key === "w") selectedOption = (selectedOption - 1) % menu.children.length;
-        else if (key === "down" || key === "s") selectedOption = (selectedOption + 1) % menu.children.length;
-        else if (key === "enter" || key === "space") k.go(menuOptions[menu.children[selectedOption].option]);
+    const arrow = k.add([
+        k.pos(540, menu.pos.add(menu.children[0].pos).y),
+        k.anchor("center"),
+        k.layer("ui"),
+        k.text("<"),
+    ]);
+
+    // Input
+    linearSelector.onChange((newSelection) => {
+        arrow.pos = k.vec2(540, menu.pos.add(menu.children[newSelection].pos).y);
+    });
+
+    linearSelector.onSelect(() => {
+        sceneState.changeScene(menuOptions[menu.children[linearSelector.selectedOption].option]);
     });
 });

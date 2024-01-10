@@ -7,6 +7,9 @@
 - New slider sprite: "Green Apple"
 - New song in main menu desing
 
+## Technical
+- Raw support for TJA files
+
 # Alpha 1.1.0 - 12/11/2023
 ## Mechanics
 - Combo

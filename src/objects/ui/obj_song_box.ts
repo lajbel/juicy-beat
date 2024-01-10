@@ -1,9 +1,11 @@
 import type { Song } from "../../types";
-import { k } from "../../main";
+import { k, gameData } from "../../main";
+import {
+    songBoxWidth,
+    songBoxHeight,
+} from "../../config";
 
-const songBoxHeight = 100;
-
-export const songBox = (songData: Song) => {
+export const songBoxObj = (songData: Song) => {
     const songBox = k.make([
         k.pos(),
         k.anchor("center"),
@@ -46,7 +48,7 @@ export const songBox = (songData: Song) => {
     // Song's background
     songBox.add([
         k.pos(),
-        k.rect(400, songBoxHeight),
+        k.rect(songBoxWidth, songBoxHeight),
         k.color(k.Color.fromHex("#873e84")),
         k.opacity(0.5),
     ]);
@@ -63,11 +65,25 @@ export const songBox = (songData: Song) => {
         k.text(songData.subtitle, { size: 15 }),
     ]);
 
-    // Song's stars
-    songBox.add([
-        k.pos(10, 70),
-        k.text("*".repeat(songData.courses[0].difficulty), { size: 20 }),
+    // Song's high score
+    const hi = songBox.add([
+        k.pos(songBoxWidth - 10, 70),
+        k.text("000000", { size: 20 }),
+        k.anchor("topright"),
     ]);
+
+    // Song's stars
+    for (let i = 0; i < songData.courses[0].difficulty; i++) {
+        songBox.add([
+            k.pos(10 + (20 * i), 70),
+            k.sprite("starui"),
+        ]);
+    }
+
+    // Fetch data
+    const playData = gameData.getPlayData(songData.title, songData.courses[0].difficulty);
+    if (playData.highScore === undefined) playData.highScore = 0;
+    hi.text = playData.highScore.toString().padStart(6, "0");
 
     return songBox;
 };

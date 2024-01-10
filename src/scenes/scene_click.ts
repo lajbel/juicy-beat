@@ -1,6 +1,9 @@
 import { k } from "../main";
+import { SceneState } from "../classes/SceneState";
 
 export const loadClickScene = () => k.scene("click", () => {
+    const sceneState = new SceneState("click", () => ({}));
+
     k.add([
         k.rect(k.width(), k.height()),
         k.color(k.Color.fromHex("#000000")),
@@ -15,7 +18,7 @@ export const loadClickScene = () => k.scene("click", () => {
 
     k.onUpdate(() => {
         if (k.isMousePressed() || k.isKeyPressed("enter") || k.isKeyPressed("space")) {
-            k.go("main_menu");
+            sceneState.changeScene("main_menu");
         }
     });
 });

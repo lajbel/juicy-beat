@@ -1,13 +1,19 @@
 import { AudioPlay } from "kaboom";
 import { k, gameData } from "../main";
 import { SceneState } from "../classes/SceneState";
-import { songBox } from "../objects/ui/obj_song_box";
+import { linearSelectorObj } from "../objects/ui/obj_linear_selector";
+import { songBoxObj } from "../objects/ui/obj_song_box";
 import { complexAdd } from "../util";
 
-export const loadSongSelectionScene = () => k.scene("song_selection", () => {
-    const sceneState = new SceneState();
-    const songDatas = gameData.songs;
-    let selectedSong = 0;
+export const loadSongSelectionScene = () => k.scene("song_selection", (sceneData) => {
+    const sceneState = new SceneState("song_selection", () => ({
+        selectedSong: linearSelector.selectedOption,
+    }));
+    const linearSelector = k.add(linearSelectorObj());
+    // songs sorted by difficulty
+    const songs = gameData.songs.sort((a, b) => a.courses[0].difficulty - b.courses[0].difficulty);
+    linearSelector.menuObjects = songs.map((songData) => songData.title);
+    linearSelector.selectedOption = sceneData.selectedSong || 0;
     let demoSongVolume = 0;
     let demoSong: AudioPlay | null = null;
 
@@ -24,37 +30,31 @@ export const loadSongSelectionScene = () => k.scene("song_selection", () => {
 
     // Song List
     // TODO: Make songBoxHeight global
-    songDatas.forEach((songData, i) => {
-        const songBoxObj = complexAdd(songBox(songData), null, [
+    songs.forEach((songData, i) => {
+        const songBox = complexAdd(songBoxObj(songData), null, [
             k.pos(0, 80 + (i * (100 + 20))),
         ]);
 
-        songBoxObj.onSelect((songData) => {
+        songBox.onSelect((songData) => {
             sceneState.setBackgroundMusic(songData.sound, { loop: true, volume: 0.5, seek: songData.demoStart });
         });
     });
 
     // Input
-    let menuKeys = ["up", "down", "w", "s", "escape"];
-    let menuKeysPressed = false;
+    linearSelector.onChange((newSelection, oldSelection) => {
+        k.get("song")[oldSelection].deselect();
+        k.get("song")[newSelection].select();
+    });
 
-    k.onKeyPress((key) => {
-        if (!menuKeys.includes(key) && !menuKeysPressed) return;
-        menuKeysPressed = true;
+    linearSelector.onSelect(() => {
+        sceneState.changeScene("game", songs[linearSelector.selectedOption]);
+    });
 
-        k.get("song")[selectedSong].deselect();
-
-        if (key === "down" || key === "s") selectedSong = (selectedSong + 1) % songDatas.length;
-        if (key === "up" || key === "w") selectedSong = (selectedSong - 1 + songDatas.length) % songDatas.length;
-        if (key === "escape") return sceneState.changeScene("main_menu");
-
-        k.get("song")[selectedSong].select();
-        menuKeysPressed = false;
+    k.onKeyPress("escape", () => {
+        sceneState.changeScene("main_menu");
     });
 
     k.onUpdate(() => {
-        if (k.isKeyPressed("enter")) sceneState.changeScene("game", songDatas[selectedSong]);
-
         // TEMP
         if (k.isKeyPressed("m")) {
             gameData.setSetting("demoMusic", !gameData.settings.demoMusic);
@@ -71,5 +71,5 @@ export const loadSongSelectionScene = () => k.scene("song_selection", () => {
     });
 
     // Select the first song
-    k.get("song")[selectedSong].select();
+    k.get("song")[linearSelector.selectedOption].select();
 });

@@ -1,5 +1,5 @@
 {
-	"name": "kaboom",
+	"name": "juicy-beat",
 	"scripts": {
 		"build": "esbuild --bundle src/main.ts --outfile=docs/game.js",
 		"dev": "esbuild --bundle src/main.ts --outfile=docs/game.js --servedir=docs/ --sourcemap",

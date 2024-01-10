@@ -1,7 +1,7 @@
 import type { NoteType } from "../../types";
 import { k } from "../../main";
 import { padlZero } from "../../util";
-import { appearNoteOffset, comboZeros, scoreZeros, noteUIPanelVel, startHealth } from "../../config";
+import { appearNoteOffset, comboZeros, scoreZeros, uiPanelNoteSpeed, startHealth } from "../../config";
 
 export const playInfoObj = () => {
     const playInfo = k.make([
@@ -24,7 +24,7 @@ export const playInfoObj = () => {
                         k.pos(k.vec2((-k.width() / 2) - appearNoteOffset, 200)),
                         k.anchor("botright"),
                         k.sprite(`note_${noteKind}`, { frame: 1 }),
-                        k.move(k.RIGHT, noteUIPanelVel),
+                        k.move(k.RIGHT, uiPanelNoteSpeed),
                         k.offscreen({ destroy: true, distance: 100 }),
                     ]);
                 }

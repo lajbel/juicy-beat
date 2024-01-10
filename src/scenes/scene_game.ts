@@ -1,7 +1,8 @@
 import type { AudioPlay, GameObj, Vec2 } from "kaboom";
 import type { Rail, Song } from "../types";
 import { gameData, k } from "../main";
-import { isNoteSequence, isStartCommand, isEndCommand, isMeasureCommand, isScrollCommand } from "../types";
+import { isNoteSequence, isMeasureCommand, isScrollCommand } from "../types";
+import { SceneState } from "../classes/SceneState";
 import { PlayState } from "../classes/PlayState";
 import { playerObj } from "../objects/game/obj_player";
 import { backgroundObj } from "../objects/game/obj_background";
@@ -12,21 +13,13 @@ import { hitPointObj } from "../objects/game/obj_hit_point";
 import { waitMs } from "../util";
 import { hitPointDistance } from "../config";
 
-export const loadGameScene = () => k.scene("game", (songData) => {
-    const playData = new PlayState();
+
+export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
+    const sceneState = new SceneState("game", () => ({}));
+    const playState = new PlayState(songData);
     const noteStack: GameObj[] = [];
     const noteVel = 400;
-    const hitPointSize = 60;
     let playingAudio: AudioPlay | null = null;
-
-    k.layers([
-        "background",
-        "note",
-        "player",
-        "sword",
-        "default",
-        "ui",
-    ], "default");
 
     const background = k.add(backgroundObj("#ee8fcb"));
     const player = k.add(playerObj());
@@ -80,16 +73,16 @@ export const loadGameScene = () => k.scene("game", (songData) => {
         const hitPoint = noteHitPoints.children[rail];
         // Combo bonuses
         let comboBonus = 0;
-        if (playData.combo >= 10) comboBonus = 10;
-        if (playData.combo >= 20) comboBonus = 20;
-        if (playData.combo >= 50) comboBonus = 50;
-        if (playData.combo >= 100) comboBonus = 100;
-        if (playData.combo >= 200) comboBonus = 200;
-        if (playData.combo >= 500) comboBonus = 500;
-        if (playData.combo >= 1000) comboBonus = 1000;
+        if (playState.combo >= 10) comboBonus = 10;
+        if (playState.combo >= 20) comboBonus = 20;
+        if (playState.combo >= 50) comboBonus = 50;
+        if (playState.combo >= 100) comboBonus = 100;
+        if (playState.combo >= 200) comboBonus = 200;
+        if (playState.combo >= 500) comboBonus = 500;
+        if (playState.combo >= 1000) comboBonus = 1000;
         // Update texts
-        playData.score += amount + comboBonus;
-        playInfo.setScore(playData.score);
+        playState.score += amount + comboBonus;
+        playInfo.setScore(playState.score);
         // Score text
         k.add([
             k.pos(hitPoint.worldPos().add(k.vec2(0, -40))),
@@ -102,19 +95,19 @@ export const loadGameScene = () => k.scene("game", (songData) => {
     }
 
     function addCombo(amount: number) {
-        playData.combo += amount;
-        playInfo.setCombo(playData.combo);
+        playState.combo += amount;
+        playInfo.setCombo(playState.combo);
     }
 
     function registerMiss(rail: Rail) {
         k.shake(4);
         addScore(0, "Miss", rail);
-        playData.noteIndex++;
-        playData.oldestNote = noteStack[playData.noteIndex];
-        playData.health--;
-        playData.combo = 0;
-        playInfo.updateHealth(playData.health);
-        playInfo.setCombo(playData.combo);
+        playState.noteIndex++;
+        playState.oldestNote = noteStack[playState.noteIndex];
+        playState.health--;
+        playState.combo = 0;
+        playInfo.updateHealth(playState.health);
+        playInfo.setCombo(playState.combo);
     }
 
     function onHitRail(rail: Rail) {
@@ -122,6 +115,7 @@ export const loadGameScene = () => k.scene("game", (songData) => {
         const hittedNote = k.get("note").filter((note) => hitPoint.isColliding(note) && note.state === "active")[0];
         // Sword animation
         sword.hit(rail);
+
 
         if (gameData.debug) {
             hitPoint.use(k.color(k.RED));
@@ -135,6 +129,7 @@ export const loadGameScene = () => k.scene("game", (songData) => {
         }
 
         if (!hittedNote) return;
+        console.log(hittedNote.index)
         hittedNote.enterState("hit");
 
         const noteDis = hittedNote.worldPos().dist(hitPoint.worldPos());
@@ -162,12 +157,12 @@ export const loadGameScene = () => k.scene("game", (songData) => {
             addScore(50, "Good", rail)
         };
 
-        if (hittedNote?.id === playData.oldestNote?.id) {
+        if (hittedNote?.index === playState.oldestNote?.index) {
             addCombo(1);
         }
 
-        playData.noteIndex++;
-        playData.oldestNote = noteStack[playData.noteIndex];
+        playState.noteIndex++;
+        playState.oldestNote = noteStack[playState.noteIndex];
     }
 
     function onHitUpdate(rail: Rail) {
@@ -186,7 +181,7 @@ export const loadGameScene = () => k.scene("game", (songData) => {
 
     function addSingle(rail: Rail, velMultiplier = 1) {
         const railPoint = railPoints.children[rail].worldPos();
-        const single = noteSingleObj(rail, noteVel * velMultiplier, railPoint, 0);
+        const single = noteSingleObj(rail, noteVel * velMultiplier, railPoint, noteStack.length);
 
         // Note hit
         single.onStateEnter("hit", () => {
@@ -203,7 +198,7 @@ export const loadGameScene = () => k.scene("game", (songData) => {
 
         // Add notes to the stack and update note needed for combo
         noteStack.push(single);
-        if (!playData.oldestNote) playData.oldestNote = single;
+        if (!playState.oldestNote) playState.oldestNote = single;
 
         k.add(single);
         return single;
@@ -211,7 +206,7 @@ export const loadGameScene = () => k.scene("game", (songData) => {
 
     function addSlider(rail: Rail, velMultiplier = 1) {
         const railPoint = railPoints.children[rail].worldPos();
-        const slider = noteSliderObj(rail, noteVel * velMultiplier, railPoint, 0);
+        const slider = noteSliderObj(rail, noteVel * velMultiplier, railPoint, noteStack.length);
 
         slider.on("subnote_destroy", () => {
             playInfo.addNote("slider");
@@ -225,7 +220,7 @@ export const loadGameScene = () => k.scene("game", (songData) => {
         });
 
         noteStack.push(slider);
-        if (!playData.oldestNote) playData.oldestNote = slider;
+        if (!playState.oldestNote) playState.oldestNote = slider;
 
         k.add(slider);
         return slider;
@@ -235,16 +230,12 @@ export const loadGameScene = () => k.scene("game", (songData) => {
         const bpm = songData.bpm;
         const defaultMeasure = 4 / 4;
         const getDistanceTimeOfHitPoint = () => ((k.width() / 2) - hitPointDistance) / (noteVel * scrollSpeed);
-        console.log(songData.offset);
         let scrollSpeed = 1;
         let musicOffset = songData.offset >= 0 ? songData.offset : 0;
         let notesOffset = songData.offset < 0 ? -songData.offset : 0;
 
-        console.log(musicOffset, notesOffset)
-
         songTitle.text = songData.title;
         songSubtitle.text = songData.subtitle;
-
 
         k.wait(musicOffset + getDistanceTimeOfHitPoint(), () => {
             playingAudio = k.play(songData.sound);
@@ -299,14 +290,15 @@ export const loadGameScene = () => k.scene("game", (songData) => {
             });
 
             k.wait(musicDuration, () => {
-                k.debug.log("music finished");
+                exitGame();
             });
         });
     }
 
     function exitGame() {
         playingAudio?.stop();
-        k.go("song_selection");
+        playState.savePlayData();
+        sceneState.changeScene("song_selection");
     }
 
     // Input

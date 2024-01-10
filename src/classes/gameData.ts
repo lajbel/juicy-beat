@@ -1,5 +1,6 @@
 import type { Song } from "../types";
 import { k } from "../main";
+import { PlayState } from "./PlayState";
 
 type PlayerSettings = {
     skin: string,
@@ -39,5 +40,9 @@ export class GameData {
         this.player[key] = value;
         k.debug.log(`player ${key} set to ${value}`);
         k.setData("player", this.player);
+    }
+
+    getPlayData(song: string, difficulty: number): PlayState {
+        return k.getData(`playData.${song}.${difficulty}`) || {};
     }
 }
