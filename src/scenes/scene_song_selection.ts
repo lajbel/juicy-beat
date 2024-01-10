@@ -4,6 +4,7 @@ import { SceneState } from "../classes/SceneState";
 import { linearSelectorObj } from "../objects/ui/obj_linear_selector";
 import { songBoxObj } from "../objects/ui/obj_song_box";
 import { complexAdd } from "../util";
+import { createBackground, createText } from "../objects";
 
 export const loadSongSelectionScene = () => k.scene("song_selection", (sceneData) => {
     const sceneState = new SceneState("song_selection", () => ({
@@ -17,16 +18,12 @@ export const loadSongSelectionScene = () => k.scene("song_selection", (sceneData
     let demoSongVolume = 0;
     let demoSong: AudioPlay | null = null;
 
-    k.add([
-        k.rect(k.width(), k.height()),
-        k.color(k.Color.fromHex("#ee8fcb")),
-    ]);
-
-    k.add([
-        k.pos(k.width() / 2, 10),
-        k.anchor("top"),
-        k.text("Select a song!", { size: 32 }),
-    ]);
+    k.add(createBackground({ color: "#ee8fcb" }));
+    k.add(createText({
+        pos: k.vec2(k.width() / 2, 10),
+        text: "Select a song!",
+        anchor: "top",
+    }))
 
     // Song List
     // TODO: Make songBoxHeight global

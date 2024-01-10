@@ -2,10 +2,7 @@ import kaboom from "kaboom";
 import { layerPlugin, moreKeysPlugin } from "kaboom-extra";
 import { GameData } from "./classes/GameData";
 import { loadAssets } from "./loader";
-import { loadGameScene } from "./scenes/scene_game";
-import { loadSongSelectionScene } from "./scenes/scene_song_selection";
-import { loadMainMenuScene } from "./scenes/scene_main_menu";
-import { loadClickScene } from "./scenes/scene_click";
+import { loadClickScene, loadGameScene, loadMainMenuScene, loadSongSelectionScene } from "./scenes";
 
 export const k = kaboom({
     width: 720,

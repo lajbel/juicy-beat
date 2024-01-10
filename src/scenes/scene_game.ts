@@ -4,14 +4,13 @@ import { gameData, k } from "../main";
 import { isNoteSequence, isMeasureCommand, isScrollCommand } from "../types";
 import { SceneState } from "../classes/SceneState";
 import { PlayState } from "../classes/PlayState";
-import { playerObj } from "../objects/game/obj_player";
-import { backgroundObj } from "../objects/game/obj_background";
 import { swordObj } from "../objects/game/obj_sword";
 import { noteSliderObj, noteSingleObj } from "../objects/game/obj_note";
 import { playInfoObj } from "../objects/game/obj_play_info";
 import { hitPointObj } from "../objects/game/obj_hit_point";
 import { waitMs } from "../util";
 import { hitPointDistance } from "../config";
+import { createObj, createBackground, createPlayer } from "../objects";
 
 
 export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
@@ -21,8 +20,8 @@ export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
     const noteVel = 400;
     let playingAudio: AudioPlay | null = null;
 
-    const background = k.add(backgroundObj("#ee8fcb"));
-    const player = k.add(playerObj());
+    k.add(createBackground({ color: "#ee8fcb", }));
+    const player = k.add(createPlayer());
     const sword = player.add(swordObj());
     const playInfo = k.add(playInfoObj());
 
@@ -51,23 +50,19 @@ export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
     noteHitPoints.add(hitPointObj(k.vec2(0, -hitPointDistance)));
     noteHitPoints.add(hitPointObj(k.vec2(hitPointDistance, 0)));
 
-    const railPoints = k.add([
-        k.pos(k.center()),
-        k.anchor("center"),
-    ]);
-    railPoints.add([
-        k.pos(-k.width() / 2, 0),
-        k.anchor("center"),
-    ]);
-    railPoints.add([
-        k.pos(0, -k.height() / 2),
-        k.anchor("center"),
-    ]);
-    railPoints.add([
-        k.pos(k.width() / 2, 0),
-        k.anchor("center"),
-    ]);
+    const railPoints = k.add(createObj({
+        pos: k.center(),
+    }));
 
+    [
+        k.vec2(-k.width() / 2, 0),
+        k.vec2(0, -k.height() / 2),
+        k.vec2(k.width() / 2, 0),
+    ].forEach((pos) => {
+        railPoints.add(createObj({
+            pos,
+        }));
+    });
 
     function addScore(amount: number, message: string, rail: Rail) {
         const hitPoint = noteHitPoints.children[rail];

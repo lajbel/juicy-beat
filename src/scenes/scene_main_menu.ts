@@ -1,7 +1,7 @@
 import { k } from "../main";
 import { SceneState } from "../classes/SceneState";
 import { linearSelectorObj } from "../objects/ui/obj_linear_selector";
-import { backgroundObj } from "../objects/game/obj_background";
+import { createBackground } from "../objects";
 
 export const loadMainMenuScene = () => k.scene("main_menu", (sceneData) => {
     const sceneState = new SceneState("main_menu", () => ({
@@ -11,8 +11,7 @@ export const loadMainMenuScene = () => k.scene("main_menu", (sceneData) => {
     const linearSelector = k.add(linearSelectorObj());
     linearSelector.selectedOption = sceneData.selectedOption || 0;
 
-    // Background
-    k.add(backgroundObj("#ee8fcb"));
+    k.add(createBackground({ color: "#000000" }));
 
     // Logo
     k.add([
