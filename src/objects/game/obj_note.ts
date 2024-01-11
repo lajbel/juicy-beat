@@ -1,6 +1,8 @@
 import { Anchor, AreaComp, GameObj, Vec2 } from "kaboom";
 import { k } from "../../main";
 import { Rail, NoteType } from "../../types";
+import { ObjOpt, createArea, createSprite } from "../common";
+import { use } from "../../util/use";
 
 const directionByRail = (rail: Rail) => {
     return {
@@ -41,6 +43,77 @@ export function noteComp(type: NoteType, index: number, rail: Rail) {
         index,
         rail,
     }
+}
+
+export interface NoteBaseOpt<T> extends ObjOpt<T> {
+    type?: NoteType;
+    index?: number;
+    rail?: Rail;
+}
+
+export function createNoteBase<T>(userOpt?: NoteBaseOpt<T>) {
+    const opt = Object.assign({
+        type: "single",
+        index: 0,
+        rail: 0,
+        size: k.vec2(63, 63),
+        tags: ["note"],
+    }, userOpt);
+
+    const obj = createArea(opt);
+    const newObj = use(obj, [
+        k.state("active", noteStates),
+        {
+            type: opt.type,
+            index: opt.index,
+            rail: opt.rail,
+        }
+    ]);
+
+    return newObj;
+}
+export function createSingleNote(userOpt?: NoteBaseOpt<any>) {
+    const opt = Object.assign({
+        type: "single",
+        index: 0,
+        rail: 0,
+    }, userOpt);
+
+    const baseNote = createNoteBase(opt);
+
+    const baseNoteSprite = baseNote.add(createSprite({
+        sprite: "note_single",
+        anchor: k.vec2(0, 0.28),
+    }))
+
+    const newBaseNote = use(baseNote, [{
+        noteSprite: baseNoteSprite,
+    }]);
+
+    newBaseNote.onStateEnter("hit", () => {
+        k.play("slice", { loop: false, volume: 0.5 });
+        newBaseNote.noteSprite.play("hit", { loop: false });
+        newBaseNote.enterState("miss");
+    });
+
+    newBaseNote.onStateEnter("miss", () => {
+        newBaseNote.enterState("destroy");
+    });
+
+    newBaseNote.onStateEnter("destroy", () => {
+        newBaseNote.unuse("move");
+        newBaseNote.use(k.lifespan(0.2));
+        newBaseNote.noteSprite.use(k.lifespan(0.1, { fade: 0.1 }));
+    });
+
+    return newBaseNote;
+}
+
+export function addSubNote(note: GameObj) {
+
+}
+
+export function createSliderNote(index: number, rail: Rail) {
 }
 
 // Single note

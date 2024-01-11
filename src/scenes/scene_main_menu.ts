@@ -1,7 +1,7 @@
 import { k } from "../main";
 import { SceneState } from "../classes/SceneState";
 import { linearSelectorObj } from "../objects/ui/obj_linear_selector";
-import { createBackground } from "../objects";
+import { createBackground, createSprite, createText } from "../objects";
 
 export const loadMainMenuScene = () => k.scene("main_menu", (sceneData) => {
     const sceneState = new SceneState("main_menu", () => ({
@@ -11,21 +11,19 @@ export const loadMainMenuScene = () => k.scene("main_menu", (sceneData) => {
     const linearSelector = k.add(linearSelectorObj());
     linearSelector.selectedOption = sceneData.selectedOption || 0;
 
-    k.add(createBackground({ color: "#000000" }));
+    k.add(createBackground({ color: "#ee8fcb" }));
 
-    // Logo
-    k.add([
-        k.sprite("logo"),
-        k.pos(k.width() / 2, 200),
-        k.anchor("center"),
-    ]);
+    k.add(createSprite({
+        sprite: "logo",
+        pos: k.vec2(k.width() / 2, 200),
+    }))
 
-    // Info
-    k.add([
-        k.pos(k.center().x, k.height() - 10),
-        k.anchor("bot"),
-        k.text("JuicyBeat 1.1.0 - 12/11/2023 - dev by lajbel", { size: 18, align: "center" })
-    ]);
+    k.add(createText({
+        text: "Juicy Beat 1.2.0 - 1/10/2024 - dev by lajbel",
+        size: 18,
+        pos: k.vec2(k.center().x, k.height() - 10),
+        align: "center",
+    }))
 
     // Menu
     const menuOptions = {

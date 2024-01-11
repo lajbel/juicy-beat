@@ -5,12 +5,20 @@ import { isNoteSequence, isMeasureCommand, isScrollCommand } from "../types";
 import { SceneState } from "../classes/SceneState";
 import { PlayState } from "../classes/PlayState";
 import { swordObj } from "../objects/game/obj_sword";
-import { noteSliderObj, noteSingleObj } from "../objects/game/obj_note";
+import { noteSliderObj } from "../objects/game/obj_note";
 import { playInfoObj } from "../objects/game/obj_play_info";
 import { hitPointObj } from "../objects/game/obj_hit_point";
 import { waitMs } from "../util";
 import { hitPointDistance } from "../config";
-import { createObj, createBackground, createPlayer } from "../objects";
+import { createObj, createBackground, createPlayer, createSingleNote } from "../objects";
+
+const directionByRail = (rail: Rail) => {
+    return {
+        "0": k.RIGHT,
+        "1": k.DOWN,
+        "2": k.LEFT,
+    }[rail];
+}
 
 
 export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
@@ -21,7 +29,7 @@ export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
     let playingAudio: AudioPlay | null = null;
 
     k.add(createBackground({ color: "#ee8fcb", }));
-    const player = k.add(createPlayer());
+    const player = k.add(createPlayer({ pos: k.center() }));
     const sword = player.add(swordObj());
     const playInfo = k.add(playInfoObj());
 
@@ -176,14 +184,16 @@ export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
 
     function addSingle(rail: Rail, velMultiplier = 1) {
         const railPoint = railPoints.children[rail].worldPos();
-        const single = noteSingleObj(rail, noteVel * velMultiplier, railPoint, noteStack.length);
+        const single = createSingleNote({
+            pos: railPoint,
+            index: noteStack.length,
+            rail,
+        });
 
-        // Note hit
         single.onStateEnter("hit", () => {
             playInfo.addNote("single");
         });
 
-        // Check for note miss
         single.onUpdate(() => {
             if (single.state === "active" && single.hasPoint(k.center())) {
                 single.enterState("miss");
@@ -191,7 +201,8 @@ export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
             }
         });
 
-        // Add notes to the stack and update note needed for combo
+        single.use(k.move(directionByRail(rail), noteVel * velMultiplier));
+
         noteStack.push(single);
         if (!playState.oldestNote) playState.oldestNote = single;
 

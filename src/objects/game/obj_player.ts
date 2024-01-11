@@ -1,7 +1,7 @@
 import { k, gameData } from "../../main";
-import { createSprite, SpriteObjOpt } from "../common";
+import { createObj, createSprite, SpriteObjOpt } from "../common";
 
-export function createPlayer(opt?: SpriteObjOpt) {
+export function createPlayer<T>(opt?: SpriteObjOpt<T>) {
     const config = Object.assign({
         sprite: gameData.player.skin,
     }, opt);

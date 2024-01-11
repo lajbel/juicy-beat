@@ -1,14 +1,16 @@
+import type * as Kaboom from "kaboom";
 import { k } from "../../main";
 import { use } from "../../util/use";
 import { RenderOpt, createRender } from "./obj_render";
 
-export interface TextObjOpt extends RenderOpt {
+export interface TextObjOpt<T = any> extends RenderOpt<T> {
     text?: string;
     size?: number;
     font?: string;
+    align?: Kaboom.TextAlign;
 }
 
-export function createText(opt?: TextObjOpt) {
+export function createText<T>(opt?: TextObjOpt<T>) {
     const config = Object.assign({
         text: "",
         size: 16,
@@ -20,8 +22,9 @@ export function createText(opt?: TextObjOpt) {
         k.text(config.text, {
             size: config.size,
             font: config.font,
+            align: config.align,
         }),
     ]);
 
-    return baseObj as typeof newObj;
+    return newObj;
 }

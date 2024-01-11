@@ -2,24 +2,19 @@ import { k } from "../../main";
 import { use } from "../../util/use";
 import { RenderOpt, createRender } from "./obj_render";
 
-export interface SpriteObjOpt extends RenderOpt {
+export interface SpriteObjOpt<T = any> extends RenderOpt<T> {
     sprite?: string;
 }
 
-export function createSprite(opt?: SpriteObjOpt) {
-    const config = Object.assign({
-        text: "",
-        size: 16,
-        font: "happy",
-    }, opt);
+export function createSprite<T>(userOpt?: SpriteObjOpt<T>) {
+    const opt = Object.assign({
+        sprite: "bean",
+    }, userOpt);
 
-    const baseObj = createRender(config);
+    const baseObj = createRender(opt);
     const newObj = use(baseObj, [
-        k.text(config.text, {
-            size: config.size,
-            font: config.font,
-        }),
+        k.sprite(opt.sprite),
     ]);
 
-    return baseObj as typeof newObj;
+    return newObj;
 }

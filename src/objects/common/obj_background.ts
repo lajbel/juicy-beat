@@ -3,20 +3,20 @@ import { k } from "../../main";
 import { use } from "../../util/use"
 import { RenderOpt, createRender } from "./obj_render";
 
-export interface BackgroundObjOpt extends RenderOpt {
+export interface BackgroundObjOpt<T = any> extends RenderOpt<T> {
     size?: Kaboom.Vec2;
 }
 
-export function createBackground(opt?: BackgroundObjOpt) {
-    const config = Object.assign({
+export function createBackground<T>(userOpt?: BackgroundObjOpt<T>) {
+    const opt = Object.assign({
         pos: k.center(),
         size: k.vec2(k.width(), k.height()),
-    }, opt);
+    }, userOpt);
 
-    const baseObj = createRender(config);
+    const baseObj = createRender(opt);
     const newObj = use(baseObj, [
-        k.rect(config.size.x, config.size.y),
+        k.rect(opt.size.x, opt.size.y),
     ]);
 
-    return baseObj as typeof newObj;
+    return newObj;
 }
