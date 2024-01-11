@@ -109,43 +109,11 @@ export function createSingleNote(userOpt?: NoteBaseOpt<any>) {
     return newBaseNote;
 }
 
-export function addSubNote(note: GameObj) {
-
-}
-
 export function createSliderNote(index: number, rail: Rail) {
 }
 
-// Single note
-export function noteSingleObj(rail: Rail, vel: number, pos: Vec2, index: number) {
-    const note = k.make([
-        k.pos(pos),
-        k.layer("note"),
-        k.anchor(k.vec2(0, 0.28)),
-        k.sprite("note_single"),
-        k.area(),
-        k.move(directionByRail(rail), vel),
-        k.opacity(1),
-        k.state("active", noteStates),
-        noteComp("single", index, rail),
-    ]);
+export function addSubNote(note: GameObj) {
 
-    note.onStateEnter("hit", () => {
-        k.play("slice", { loop: false, volume: 0.5 });
-        note.play("hit", { loop: false });
-        note.enterState("miss");
-    });
-
-    note.onStateEnter("miss", () => {
-        note.enterState("destroy");
-    });
-
-    note.onStateEnter("destroy", () => {
-        note.unuse("move");
-        note.use(k.lifespan(0.1, { fade: 0.1 }));
-    });
-
-    return note;
 }
 
 export function noteSliderObj(rail: Rail, vel: number, pos: Vec2, index: number) {

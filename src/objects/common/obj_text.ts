@@ -1,30 +1,34 @@
 import type * as Kaboom from "kaboom";
 import { k } from "../../main";
 import { use } from "../../util/use";
+import { ObjOpt, createOptions } from "./obj_base";
 import { RenderOpt, createRender } from "./obj_render";
 
-export interface TextObjOpt<T = any> extends RenderOpt<T> {
+export type TextObjOpt<T> = {
     text?: string;
     size?: number;
     font?: string;
     align?: Kaboom.TextAlign;
 }
 
-export function createText<T>(opt?: TextObjOpt<T>) {
-    const config = Object.assign({
+export function applyTextComponents<T>(obj: Kaboom.GameObj<T>, opt: Required<TextObjOpt<T>>) {
+    const newObj = use(obj, [
+        k.text(opt.text, {
+            size: opt.size,
+            font: opt.font,
+            align: opt.align,
+        }),
+    ]);
+    return newObj;
+}
+
+export function createText<T>(userOpt?: TextObjOpt<T> & RenderOpt<T> & ObjOpt<T>) {
+    const opt = createOptions({
         text: "",
         size: 16,
         font: "happy",
-    }, opt);
+        align: "center",
+    }, userOpt);
 
-    const baseObj = createRender(config);
-    const newObj = use(baseObj, [
-        k.text(config.text, {
-            size: config.size,
-            font: config.font,
-            align: config.align,
-        }),
-    ]);
-
-    return newObj;
+    return applyTextComponents(createRender(opt), opt);
 }

@@ -2,21 +2,24 @@ import type * as Kaboom from "kaboom";
 import { k } from "../../main";
 import { use } from "../../util/use"
 import { RenderOpt, createRender } from "./obj_render";
+import { ObjOpt, createOptions } from "./obj_base";
 
-export interface BackgroundObjOpt<T = any> extends RenderOpt<T> {
+export type BackgroundObjOpt<T> = {
     size?: Kaboom.Vec2;
 }
 
-export function createBackground<T>(userOpt?: BackgroundObjOpt<T>) {
-    const opt = Object.assign({
+export function applyBackgroundComponents<T>(obj: Kaboom.GameObj<T>, opt: Required<BackgroundObjOpt<T>>) {
+    const newObj = use(obj, [
+        k.rect(opt.size.x, opt.size.y),
+    ]);
+    return newObj;
+}
+
+export function createBackground<T>(userOpt?: BackgroundObjOpt<T> & RenderOpt<T> & ObjOpt<T>) {
+    const opt = createOptions({
         pos: k.center(),
         size: k.vec2(k.width(), k.height()),
     }, userOpt);
 
-    const baseObj = createRender(opt);
-    const newObj = use(baseObj, [
-        k.rect(opt.size.x, opt.size.y),
-    ]);
-
-    return newObj;
+    return applyBackgroundComponents(createRender(opt), opt);
 }

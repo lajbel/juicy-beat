@@ -1,18 +1,13 @@
 import type * as Kaboom from "kaboom";
 import { k } from "../../main";
-import { ObjOpt, createObj } from "./obj_base";
+import { ObjOpt, createObj, createOptions } from "./obj_base";
 import { use } from "../../util/use";
 
-export interface AreaOpt<T = any> extends ObjOpt<T> {
+export type AreaOpt<T> = {
     size?: Kaboom.Vec2;
 }
 
-export function createArea<T>(userOpt?: AreaOpt<T>) {
-    const opt = Object.assign({
-        size: k.vec2(0),
-    }, userOpt);
-
-    const obj = createObj(opt);
+export function applyAreaComponents<T>(obj: Kaboom.GameObj<T>, opt: Required<AreaOpt<T>>) {
     const newObj = use(obj, [
         k.area({
             shape: new k.Rect(k.vec2(0), opt.size.x, opt.size.y),
@@ -20,4 +15,12 @@ export function createArea<T>(userOpt?: AreaOpt<T>) {
     ]);
 
     return newObj;
+}
+
+export function createArea<T>(userOpt?: AreaOpt<T> & ObjOpt<T>) {
+    const opt = createOptions({
+        size: k.vec2(0),
+    }, userOpt);
+
+    return applyAreaComponents(createObj(opt), opt);
 }

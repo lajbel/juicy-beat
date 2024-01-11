@@ -4,6 +4,10 @@ import { doubleTween } from "../../util";
 
 const hitPointSize = 60;
 
+export function createNoteHitPoint(opt) {
+
+}
+
 export const hitPointObj = (pos: Vec2) => {
     const noteHitPoint = k.make([
         k.pos(pos),

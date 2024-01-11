@@ -11,8 +11,12 @@ export interface ObjOpt<T = any> {
     custom?: T;
 }
 
+export function createOptions<T extends {}, T2 extends ObjOpt>(defaultOptions: T, userOpt?: T2) {
+    return Object.assign(defaultOptions, userOpt);
+}
+
 export function createObj<T>(userOpt?: ObjOpt<T>) {
-    const opt = Object.assign({
+    const opt = createOptions({
         pos: k.vec2(0, 0),
         anchor: "center",
         rotate: 0,

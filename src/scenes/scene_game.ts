@@ -1,4 +1,4 @@
-import type { AudioPlay, GameObj, Vec2 } from "kaboom";
+import type { AudioPlay, GameObj } from "kaboom";
 import type { Rail, Song } from "../types";
 import { gameData, k } from "../main";
 import { isNoteSequence, isMeasureCommand, isScrollCommand } from "../types";
@@ -19,7 +19,6 @@ const directionByRail = (rail: Rail) => {
         "2": k.LEFT,
     }[rail];
 }
-
 
 export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
     const sceneState = new SceneState("game", () => ({}));
@@ -132,7 +131,6 @@ export const loadGameScene = () => k.scene("game", (sceneData, songData) => {
         }
 
         if (!hittedNote) return;
-        console.log(hittedNote.index)
         hittedNote.enterState("hit");
 
         const noteDis = hittedNote.worldPos().dist(hitPoint.worldPos());

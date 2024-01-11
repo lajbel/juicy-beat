@@ -1,10 +1,10 @@
-import { k, gameData } from "../../main";
-import { createObj, createSprite, SpriteObjOpt } from "../common";
+import { gameData } from "../../main";
+import { createOptions, createSprite, ObjOpt, RenderOpt, SpriteObjOpt } from "../common";
 
-export function createPlayer<T>(opt?: SpriteObjOpt<T>) {
-    const config = Object.assign({
+export function createPlayer<T>(userOpt?: SpriteObjOpt<T> & RenderOpt<T> & ObjOpt<T>) {
+    const opt = createOptions({
         sprite: gameData.player.skin,
-    }, opt);
+    }, userOpt);
 
-    return createSprite(config);
+    return createSprite(opt);
 }
