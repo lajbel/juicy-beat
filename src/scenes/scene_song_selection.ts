@@ -4,12 +4,10 @@ import { SceneState } from "../classes/SceneState";
 import { linearSelectorObj } from "../objects/ui/obj_linear_selector";
 import { songBoxObj } from "../objects/ui/obj_song_box";
 import { complexAdd } from "../util";
-import { createBackground, createText } from "../objects";
+import { createBackground,createSprite } from "../objects";
 
 export const loadSongSelectionScene = () => k.scene("song_selection", (sceneData) => {
-    const sceneState = new SceneState("song_selection", () => ({
-        selectedSong: linearSelector.selectedOption,
-    }));
+    const sceneState = new SceneState("song_selection", () => ({ selectedSong: linearSelector.selectedOption }));
     const linearSelector = k.add(linearSelectorObj());
     // songs sorted by difficulty
     const songs = gameData.songs.sort((a, b) => a.courses[0].difficulty - b.courses[0].difficulty);
@@ -19,17 +17,15 @@ export const loadSongSelectionScene = () => k.scene("song_selection", (sceneData
     let demoSong: AudioPlay | null = null;
 
     k.add(createBackground({ color: "#ee8fcb" }));
-    k.add(createText({
-        pos: k.vec2(k.width() / 2, 10),
-        text: "Select a song!",
-        anchor: "top",
+
+    k.add(createSprite({
+        sprite: "logo",
+        pos: k.vec2(k.center()),
     }))
 
-    // Song List
-    // TODO: Make songBoxHeight global
     songs.forEach((songData, i) => {
         const songBox = complexAdd(songBoxObj(songData), null, [
-            k.pos(0, 80 + (i * (100 + 20))),
+            k.pos(k.center().x, 80 + (i * (100 + 20))),
         ]);
 
         songBox.onSelect((songData) => {

@@ -4,9 +4,9 @@ import { k } from "../main";
 export class SceneState {
     name: string = "";
     backgroundMusic: AudioPlay | null = null;
-    saveData: () => any;
+    saveData?: () => any;
 
-    constructor(name: string, saveData: () => any) {
+    constructor(name: string, saveData?: () => any) {
         this.name = name;
         this.saveData = saveData;
 
@@ -22,7 +22,7 @@ export class SceneState {
     }
 
     saveSceneData() {
-        k.setData(`scene.${this.name}`, this.saveData());
+        if(this.saveData) k.setData(`scene.${this.name}`, this.saveData());
     }
 
     setBackgroundMusic(music: string, options: AudioPlayOpt) {

@@ -11,7 +11,7 @@ export function applyAreaComponents<T>(obj: Kaboom.GameObj<T>, opt: Required<Are
     const newObj = use(obj, [
         k.area({
             shape: new k.Rect(k.vec2(0), opt.size.x, opt.size.y),
-        })
+        }),
     ]);
 
     return newObj;

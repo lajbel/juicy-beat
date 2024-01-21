@@ -1,11 +1,18 @@
 import type { Vec2 } from "kaboom";
 import { k } from "../../main";
 import { doubleTween } from "../../util";
+import { createCircle, createArea, createObj, ObjOpt, createOptions } from "../common";
 
 const hitPointSize = 60;
 
-export function createNoteHitPoint(opt) {
+export function createHitPoint<T>(userOpt?: ObjOpt) {
+    const opt = createOptions({
+        pos: k.vec2(0),
+    });
 
+    const hitPoint = createObj({
+        pos: opt.pos,    
+    });
 }
 
 export const hitPointObj = (pos: Vec2) => {

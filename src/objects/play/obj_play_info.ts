@@ -58,7 +58,7 @@ export const playInfoObj = () => {
     for (let i = 0; i < startHealth; i++) {
         life.add([
             k.sprite("life"),
-            k.pos(i * 40, 0),
+            k.pos(i * (40 + 6), 0),
             k.anchor("left"),
         ]);
     }
