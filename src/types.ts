@@ -28,7 +28,7 @@ export function isNoteSequence(cmd: Command): cmd is NoteSequence {
 }
 
 
-// Types
+// Typesa
 export type Rail = 0 | 1 | 2;
 
 export type Song = {
