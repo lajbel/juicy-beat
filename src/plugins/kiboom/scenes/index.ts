@@ -1,5 +1,5 @@
 import { SceneDef } from "kaboom";
-import { usingKaboom } from ".";
+import { usingKaboom } from "..";
 
 export const kiScene = (
     name: string,

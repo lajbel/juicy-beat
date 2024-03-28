@@ -1,6 +1,6 @@
 import { KaboomCtx } from "kaboom";
 import { createKaboomPlugin } from "./plugin";
-import { kiScene } from "./scene";
+import { kiScene } from "./scenes";
 
 const kiboomHead = {
     kiScene,
