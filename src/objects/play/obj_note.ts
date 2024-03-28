@@ -1,8 +1,8 @@
 import { Anchor, AreaComp, GameObj, Vec2 } from "kaboom";
 import { k } from "../../main";
-import { Rail, NoteType } from "../../types";
-import { ObjOpt, createArea, createSprite } from "../common";
+import { NoteType, Rail } from "../../types";
 import { use } from "../../util/use";
+import { createArea, createSprite, ObjOpt } from "../common";
 
 const directionByRail = (rail: Rail) => {
     return {
@@ -10,7 +10,7 @@ const directionByRail = (rail: Rail) => {
         "1": k.DOWN,
         "2": k.LEFT,
     }[rail];
-}
+};
 
 const valuesByRail = (rail: Rail) => {
     return {
@@ -27,14 +27,14 @@ const valuesByRail = (rail: Rail) => {
             dir: k.vec2(50, 0),
         },
     }[rail];
-}
+};
 
 const noteStates = [
     "active",
     "hit",
     "miss",
     "destroy",
-]
+];
 
 export function noteComp(type: NoteType, index: number, rail: Rail) {
     return {
@@ -42,7 +42,7 @@ export function noteComp(type: NoteType, index: number, rail: Rail) {
         type,
         index,
         rail,
-    }
+    };
 }
 
 export interface NoteBaseOpt<T> extends ObjOpt<T> {
@@ -67,7 +67,7 @@ export function createNoteBase<T>(userOpt?: NoteBaseOpt<T>) {
             type: opt.type,
             index: opt.index,
             rail: opt.rail,
-        }
+        },
     ]);
 
     return newObj;
@@ -84,7 +84,7 @@ export function createSingleNote(userOpt?: NoteBaseOpt<any>) {
     const baseNoteSprite = baseNote.add(createSprite({
         sprite: "note_single",
         anchor: k.vec2(0, 0.28),
-    }))
+    }));
 
     const newBaseNote = use(baseNote, [{
         noteSprite: baseNoteSprite,
@@ -113,10 +113,14 @@ export function createSliderNote(index: number, rail: Rail) {
 }
 
 export function addSubNote(note: GameObj) {
-
 }
 
-export function noteSliderObj(rail: Rail, vel: number, pos: Vec2, index: number) {
+export function noteSliderObj(
+    rail: Rail,
+    vel: number,
+    pos: Vec2,
+    index: number,
+) {
     const slider = k.make([
         k.pos(pos),
         k.layer("note"),
@@ -127,13 +131,19 @@ export function noteSliderObj(rail: Rail, vel: number, pos: Vec2, index: number)
         k.state("active", noteStates),
         noteComp("slider", index, rail),
         {
-            subNotes: new Array<GameObj>,
+            subNotes: new Array<GameObj>(),
             subNotesCount: 0,
             isCreationFinished: false,
             isRemovingSubNote: false,
             removedSubNotes: 0,
             addSubNote() {
-                const posStart = this.subNotesCount === 0 ? this.pos.add(valuesByRail(rail).dir.scale(this.subNotesCount)) : this.subNotes[this.subNotesCount - 1].pos.add(valuesByRail(rail).dir.scale(1));
+                const posStart = this.subNotesCount === 0
+                    ? this.pos.add(
+                        valuesByRail(rail).dir.scale(this.subNotesCount),
+                    )
+                    : this.subNotes[this.subNotesCount - 1].pos.add(
+                        valuesByRail(rail).dir.scale(1),
+                    );
 
                 const subnote = k.add([
                     k.pos(posStart),
@@ -147,7 +157,7 @@ export function noteSliderObj(rail: Rail, vel: number, pos: Vec2, index: number)
                     "subnote",
                     {
                         rail,
-                    }
+                    },
                 ]);
 
                 subnote.onStateEnter("hit", () => {
@@ -169,17 +179,26 @@ export function noteSliderObj(rail: Rail, vel: number, pos: Vec2, index: number)
 
                 subnote.onStateUpdate("destroy", () => {
                     if (rail === 0) {
-                        if (this.subNotes?.[this.removedSubNotes]?.pos?.x >= this?.pos?.x) {
+                        if (
+                            this.subNotes?.[this.removedSubNotes]?.pos?.x
+                                >= this?.pos?.x
+                        ) {
                             this.isRemovingSubNote = false;
                         }
                     }
                     if (rail === 1) {
-                        if (this.subNotes?.[this.removedSubNotes]?.pos?.y >= this?.pos?.y) {
+                        if (
+                            this.subNotes?.[this.removedSubNotes]?.pos?.y
+                                >= this?.pos?.y
+                        ) {
                             this.isRemovingSubNote = false;
                         }
                     }
                     if (rail === 2) {
-                        if (this.subNotes?.[this.removedSubNotes]?.pos?.x <= this?.pos?.x) {
+                        if (
+                            this.subNotes?.[this.removedSubNotes]?.pos?.x
+                                <= this?.pos?.x
+                        ) {
                             this.isRemovingSubNote = false;
                         }
                     }
@@ -191,19 +210,43 @@ export function noteSliderObj(rail: Rail, vel: number, pos: Vec2, index: number)
             },
             updateArea() {
                 if (rail === 0) {
-                    this.use(k.area({ shape: new k.Rect(k.vec2(30, 0), 50 * (this.subNotes.length), 63) }))
+                    this.use(
+                        k.area({
+                            shape: new k.Rect(
+                                k.vec2(30, 0),
+                                50 * (this.subNotes.length),
+                                63,
+                            ),
+                        }),
+                    );
                 }
                 if (rail === 1) {
-                    this.use(k.area({ shape: new k.Rect(k.vec2(0, 30), 63, 50 * (this.subNotes.length)) }))
+                    this.use(
+                        k.area({
+                            shape: new k.Rect(
+                                k.vec2(0, 30),
+                                63,
+                                50 * (this.subNotes.length),
+                            ),
+                        }),
+                    );
                 }
                 if (rail === 2) {
-                    this.use(k.area({ shape: new k.Rect(k.vec2(-30, 0), 50 * (this.subNotes.length), 63) }))
+                    this.use(
+                        k.area({
+                            shape: new k.Rect(
+                                k.vec2(-30, 0),
+                                50 * (this.subNotes.length),
+                                63,
+                            ),
+                        }),
+                    );
                 }
             },
             end() {
                 this.isCreationFinished = true;
             },
-        }
+        },
     ]);
 
     slider.onStateEnter("active", () => {

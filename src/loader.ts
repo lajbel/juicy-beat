@@ -11,14 +11,26 @@ export function loadAssets() {
     k.loadSprite("sword", "sprites/sword.png");
     k.loadSprite("sword_cut", "sprites/sword_cut.png");
     k.loadSprite("apple_break", "sprites/apple_break.png");
-    k.loadAseprite("green_apple", "sprites/green_apple.png", "sprites/green_apple.json");
+    k.loadAseprite(
+        "green_apple",
+        "sprites/green_apple.png",
+        "sprites/green_apple.json",
+    );
 
     // UI
     k.loadSprite("starui", "sprites/ui/starui.png");
 
     // Notes
-    k.loadAseprite("note_single", "sprites/notes_skin/note_single.png", "sprites/notes_skin/note_single.json");
-    k.loadAseprite("note_slider", "sprites/notes_skin/note_slider.png", "sprites/notes_skin/note_slider.json");
+    k.loadAseprite(
+        "note_single",
+        "sprites/notes_skin/note_single.png",
+        "sprites/notes_skin/note_single.json",
+    );
+    k.loadAseprite(
+        "note_slider",
+        "sprites/notes_skin/note_slider.png",
+        "sprites/notes_skin/note_slider.json",
+    );
 
     // Player skins
     k.loadSprite("bean", "sprites/players_skin/bean.png");

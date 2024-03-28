@@ -1,15 +1,18 @@
 import type * as Kaboom from "kaboom";
 import { k } from "../../main";
-import { ObjOpt, createObj, createOptions } from "./obj_base";
 import { use } from "../../util/use";
+import { createObj, createOptions, ObjOpt } from "./obj_base";
 
 export type RenderOpt<T> = {
     color?: string;
     opacity?: number;
     scale?: Kaboom.Vec2;
-}
+};
 
-export function applyRenderComponents<T>(obj: Kaboom.GameObj<T>, opt: Required<RenderOpt<T>>) {
+export function applyRenderComponents<T>(
+    obj: Kaboom.GameObj<T>,
+    opt: Required<RenderOpt<T>>,
+) {
     const newObj = use(obj, [
         k.color(k.Color.fromHex(opt.color)),
         k.opacity(opt.opacity),

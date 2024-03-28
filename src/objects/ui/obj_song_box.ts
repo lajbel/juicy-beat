@@ -1,9 +1,6 @@
+import { songBoxHeight, songBoxWidth } from "../../config";
+import { gameData, k } from "../../main";
 import type { Song } from "../../types";
-import { k, gameData } from "../../main";
-import {
-    songBoxWidth,
-    songBoxHeight,
-} from "../../config";
 
 export const songBoxObj = (songData: Song) => {
     const songBox = k.make([
@@ -31,7 +28,7 @@ export const songBoxObj = (songData: Song) => {
                     if (this.justSelected) {
                         action(this.songData);
                         this.justSelected = false;
-                    };
+                    }
                 });
             },
             onDeselect(action: (songData: Song) => void) {
@@ -39,10 +36,10 @@ export const songBoxObj = (songData: Song) => {
                     if (this.justDeselected) {
                         action(this.songData);
                         this.justDeselected = false;
-                    };
+                    }
                 });
-            }
-        }
+            },
+        },
     ]);
 
     // Song's background
@@ -81,7 +78,10 @@ export const songBoxObj = (songData: Song) => {
     }
 
     // Fetch data
-    const playData = gameData.getPlayData(songData.title, songData.courses[0].difficulty);
+    const playData = gameData.getPlayData(
+        songData.title,
+        songData.courses[0].difficulty,
+    );
     if (playData.highScore === undefined) playData.highScore = 0;
     hi.text = playData.highScore.toString().padStart(6, "0");
 

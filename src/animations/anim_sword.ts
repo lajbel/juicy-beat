@@ -10,7 +10,7 @@ export const swordAnimation = () => {
             "end": {
                 pos: k.vec2(-30, 20),
                 angle: -94,
-            }
+            },
         },
         "0second": {
             "start": {
@@ -20,7 +20,7 @@ export const swordAnimation = () => {
             "end": {
                 pos: k.vec2(5, 20),
                 angle: -120,
-            }
+            },
         },
         "1first": {
             "start": {
@@ -50,7 +50,7 @@ export const swordAnimation = () => {
             "end": {
                 pos: k.vec2(30, 20),
                 angle: 94,
-            }
+            },
         },
         "2second": {
             "start": {
@@ -60,7 +60,7 @@ export const swordAnimation = () => {
             "end": {
                 pos: k.vec2(-5, 20),
                 angle: 120,
-            }
+            },
         },
-    }
-}
+    };
+};

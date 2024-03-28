@@ -1,7 +1,13 @@
 import type { Vec2 } from "kaboom";
 import { k } from "../../main";
 import { doubleTween } from "../../util";
-import { createCircle, createArea, createObj, ObjOpt, createOptions } from "../common";
+import {
+    createArea,
+    createCircle,
+    createObj,
+    createOptions,
+    ObjOpt,
+} from "../common";
 
 const hitPointSize = 60;
 
@@ -11,7 +17,7 @@ export function createHitPoint<T>(userOpt?: ObjOpt) {
     });
 
     const hitPoint = createObj({
-        pos: opt.pos,    
+        pos: opt.pos,
     });
 }
 
@@ -23,7 +29,9 @@ export const hitPointObj = (pos: Vec2) => {
         k.circle(20),
         k.color(k.BLACK),
         k.opacity(0.1),
-        k.area({ shape: new k.Rect(k.vec2(0), hitPointSize, hitPointSize) }),
+        k.area({
+            shape: new k.Rect(k.vec2(0), hitPointSize, hitPointSize),
+        }),
         {
             greatHit() {
                 for (let i = 0; i < 3; i++) {
@@ -41,12 +49,24 @@ export const hitPointObj = (pos: Vec2) => {
                     if (i === 1) gotoX = 0;
                     if (i === 2) gotoX = 100;
 
-                    doubleTween(hitParticle.pos.x, gotoX, 0.2, (v) => hitParticle.pos.x = v, k.easings.linear);
-                    doubleTween(hitParticle.pos.y, hitParticle.pos.y + -100, 0.2, (v) => hitParticle.pos.y = v, k.easings.linear);
+                    doubleTween(
+                        hitParticle.pos.x,
+                        gotoX,
+                        0.2,
+                        (v) => hitParticle.pos.x = v,
+                        k.easings.linear,
+                    );
+                    doubleTween(
+                        hitParticle.pos.y,
+                        hitParticle.pos.y + -100,
+                        0.2,
+                        (v) => hitParticle.pos.y = v,
+                        k.easings.linear,
+                    );
                 }
-            }
-        }
+            },
+        },
     ]);
 
     return noteHitPoint;
-}
+};

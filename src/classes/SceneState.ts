@@ -22,7 +22,7 @@ export class SceneState {
     }
 
     saveSceneData() {
-        if(this.saveData) k.setData(`scene.${this.name}`, this.saveData());
+        if (this.saveData) k.setData(`scene.${this.name}`, this.saveData());
     }
 
     setBackgroundMusic(music: string, options: AudioPlayOpt) {

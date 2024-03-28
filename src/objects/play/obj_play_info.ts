@@ -1,7 +1,13 @@
-import type { NoteType } from "../../types";
+import {
+    appearNoteOffset,
+    comboZeros,
+    scoreZeros,
+    startHealth,
+    uiPanelNoteSpeed,
+} from "../../config";
 import { k } from "../../main";
+import type { NoteType } from "../../types";
 import { padlZero } from "../../util";
-import { appearNoteOffset, comboZeros, scoreZeros, uiPanelNoteSpeed, startHealth } from "../../config";
 
 export const playInfoObj = () => {
     const playInfo = k.make([
@@ -21,7 +27,9 @@ export const playInfoObj = () => {
             addNote(noteKind: NoteType) {
                 if (noteKind === "single" || noteKind === "slider") {
                     this.add([
-                        k.pos(k.vec2((-k.width() / 2) - appearNoteOffset, 200)),
+                        k.pos(
+                            k.vec2((-k.width() / 2) - appearNoteOffset, 200),
+                        ),
                         k.anchor("botright"),
                         k.sprite(`note_${noteKind}`, { frame: 1 }),
                         k.move(k.RIGHT, uiPanelNoteSpeed),
@@ -35,8 +43,8 @@ export const playInfoObj = () => {
                         life.use(k.sprite("fail"));
                     }
                 });
-            }
-        }
+            },
+        },
     ]);
 
     const score = playInfo.add([
@@ -64,4 +72,4 @@ export const playInfoObj = () => {
     }
 
     return playInfo;
-}
+};

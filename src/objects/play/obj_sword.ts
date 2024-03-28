@@ -1,7 +1,7 @@
-import type { Rail } from "../../types";
-import { k } from "../../main";
-import { tweenAnim } from "../../components/comp_tweenAnim";
 import { swordAnimation } from "../../animations/anim_sword";
+import { tweenAnim } from "../../components/comp_tweenAnim";
+import { k } from "../../main";
+import type { Rail } from "../../types";
 import { createSprite } from "../common";
 
 export function createSword() {
@@ -15,11 +15,13 @@ export function createSword() {
             variantUsed: true,
             hit(rail: Rail) {
                 if (this.lastRail !== rail) this.variantUsed = true;
-                this.playTAnim(String(rail) + (this.variantUsed ? "first" : "second"));
+                this.playTAnim(
+                    String(rail) + (this.variantUsed ? "first" : "second"),
+                );
                 this.lastRail = rail;
                 this.variantUsed = !this.variantUsed;
-            }
-        }
+            },
+        },
     });
 }
 
@@ -37,10 +39,12 @@ export const swordObj = () => {
             variantUsed: true,
             hit(rail: Rail) {
                 if (this.lastRail !== rail) this.variantUsed = true;
-                this.playTAnim(String(rail) + (this.variantUsed ? "first" : "second"));
+                this.playTAnim(
+                    String(rail) + (this.variantUsed ? "first" : "second"),
+                );
                 this.lastRail = rail;
                 this.variantUsed = !this.variantUsed;
-            }
-        }
+            },
+        },
     ]);
-}
+};

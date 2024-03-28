@@ -1,4 +1,14 @@
-import type { StartCommand, Command, EndCommand, MeasureCommand, GoGoEndCommand, GoGoStartCommand, ScrollCommand, DelayCommand, NoteSequence } from "tja";
+import type {
+    Command,
+    DelayCommand,
+    EndCommand,
+    GoGoEndCommand,
+    GoGoStartCommand,
+    MeasureCommand,
+    NoteSequence,
+    ScrollCommand,
+    StartCommand,
+} from "tja";
 export type { CommandType } from "tja";
 
 // Type functions
@@ -27,25 +37,24 @@ export function isNoteSequence(cmd: Command): cmd is NoteSequence {
     return cmd.commandType === "__NOTESEQUENCE";
 }
 
-
 // Typesa
 export type Rail = 0 | 1 | 2;
 
 export type Song = {
-    title: string,
-    subtitle: string,
-    genre: string,
-    bpm: number,
-    offset: number,
-    demoStart: number,
-    chart: Command[],
-    sound: string,
-    courses: SongCourse[],
-}
+    title: string;
+    subtitle: string;
+    genre: string;
+    bpm: number;
+    offset: number;
+    demoStart: number;
+    chart: Command[];
+    sound: string;
+    courses: SongCourse[];
+};
 
 export type SongCourse = {
-    difficulty: number,
-    chart: Command[],
-}
+    difficulty: number;
+    chart: Command[];
+};
 
 export type NoteType = "single" | "slider";

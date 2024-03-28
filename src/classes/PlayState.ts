@@ -1,6 +1,6 @@
 import type { GameObj } from "kaboom";
-import { k } from "../main";
 import { startHealth } from "../config";
+import { k } from "../main";
 import { Song } from "../types";
 
 export class PlayState {
@@ -19,7 +19,8 @@ export class PlayState {
     savePlayData() {
         const { title, courses } = this.songData;
         const { difficulty } = courses[0];
-        const playData = k.getData<PlayState>(`playData.${title}.${difficulty}`) || {};
+        const playData = k.getData<PlayState>(`playData.${title}.${difficulty}`)
+            || {};
         const highScore = playData.highScore || 0;
 
         if (this.score > highScore) {

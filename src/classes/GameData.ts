@@ -1,16 +1,16 @@
-import type { Song } from "../types";
 import { k } from "../main";
-import { PlayState } from "./PlayState";
+import type { Song } from "../types";
+import type { PlayState } from "./PlayState";
 
 type PlayerSettings = {
-    skin: string,
-    sword: string,
-}
+    skin: string;
+    sword: string;
+};
 
 type UserSettings = {
-    volume: number,
-    demoMusic: boolean,
-}
+    volume: number;
+    demoMusic: boolean;
+};
 
 export class GameData {
     debug: boolean;
@@ -36,7 +36,10 @@ export class GameData {
         k.setData("settings", this.settings);
     }
 
-    setPlayerSetting<T extends keyof PlayerSettings>(key: T, value: PlayerSettings[T]) {
+    setPlayerSetting<T extends keyof PlayerSettings>(
+        key: T,
+        value: PlayerSettings[T],
+    ) {
         this.player[key] = value;
         k.debug.log(`player ${key} set to ${value}`);
         k.setData("player", this.player);

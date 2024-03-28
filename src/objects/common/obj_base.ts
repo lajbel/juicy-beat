@@ -12,11 +12,17 @@ export interface ObjOpt<T = any> {
     custom?: T;
 }
 
-export function createOptions<T extends {}, T2 extends ObjOpt>(defaultOptions: T, userOpt?: T2) {
+export function createOptions<T extends {}, T2 extends ObjOpt>(
+    defaultOptions: T,
+    userOpt?: T2,
+) {
     return Object.assign(defaultOptions, userOpt);
 }
 
-export function appplyBaseComponents<T, T2>(obj: Kaboom.GameObj<T>, opt: Required<ObjOpt<T2>>) {
+export function appplyBaseComponents<T, T2>(
+    obj: Kaboom.GameObj<T>,
+    opt: Required<ObjOpt<T2>>,
+) {
     const newObj = use(obj, [
         k.pos(opt.pos),
         k.anchor(opt.anchor),

@@ -1,16 +1,17 @@
 {
-	"name": "juicy-beat",
-	"scripts": {
-		"build": "esbuild --bundle src/main.ts --outfile=docs/game.js",
-		"dev": "esbuild --bundle src/main.ts --outfile=docs/game.js --servedir=docs/ --sourcemap",
-		"serve": "esbuild --servedir=."
-	},
-	"dependencies": {
-		"kaboom": "^3000.1.17",
-		"kaboom-extra": "^0.1.1",
-		"tja": "^0.1.3"
-	},
-	"devDependencies": {
-		"esbuild": "^0.19.8"
-	}
+  "name": "juicy-beat",
+  "scripts": {
+    "build": "esbuild --bundle src/main.ts --outfile=docs/game.js",
+    "dev": "esbuild --bundle src/main.ts --outfile=docs/game.js --servedir=docs/ --sourcemap",
+    "serve": "esbuild --servedir=."
+  },
+  "dependencies": {
+    "dprint": "^0.45.0",
+    "kaboom": "^3000.1.17",
+    "kaboom-extra": "^0.1.1",
+    "tja": "^0.1.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.8"
+  }
 }
