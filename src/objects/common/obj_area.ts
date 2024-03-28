@@ -1,5 +1,5 @@
 import type * as Kaboom from "kaboom";
-import { k } from "../../main";
+import { k } from "../..";
 import { use } from "../../util/use";
 import { createObj, createOptions, ObjOpt } from "./obj_base";
 

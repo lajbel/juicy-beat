@@ -1,5 +1,5 @@
 import type { LerpValue } from "kaboom";
-import { k } from "../main";
+import { k } from "..";
 
 type AnimValues = {
     pos?: { x: number; y: number };

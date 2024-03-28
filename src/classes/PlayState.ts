@@ -1,6 +1,6 @@
 import type { GameObj } from "kaboom";
+import { k } from "..";
 import { startHealth } from "../config";
-import { k } from "../main";
 import { Song } from "../types";
 
 export class PlayState {

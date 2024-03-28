@@ -1,5 +1,5 @@
 import type { Vec2 } from "kaboom";
-import { k } from "../../main";
+import { k } from "../..";
 import { doubleTween } from "../../util";
 import {
     createArea,

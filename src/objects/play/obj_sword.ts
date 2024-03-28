@@ -1,6 +1,6 @@
+import { k } from "../..";
 import { swordAnimation } from "../../animations/anim_sword";
 import { tweenAnim } from "../../components/comp_tweenAnim";
-import { k } from "../../main";
 import type { Rail } from "../../types";
 import { createSprite } from "../common";
 

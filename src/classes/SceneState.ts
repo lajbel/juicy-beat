@@ -1,5 +1,5 @@
 import type { AudioPlay, AudioPlayOpt } from "kaboom";
-import { k } from "../main";
+import { k } from "..";
 
 export class SceneState {
     name: string = "";

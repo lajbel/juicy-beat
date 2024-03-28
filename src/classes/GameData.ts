@@ -1,4 +1,4 @@
-import { k } from "../main";
+import { k } from "..";
 import type { Song } from "../types";
 import type { PlayState } from "./PlayState";
 

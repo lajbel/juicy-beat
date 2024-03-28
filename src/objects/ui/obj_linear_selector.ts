@@ -1,4 +1,4 @@
-import { k } from "../../main";
+import { k } from "../..";
 
 export const linearSelectorObj = () => {
     const linearSelector = k.make([

@@ -1,6 +1,6 @@
 import type * as KA from "kaboom";
 import { TJAParser } from "tja";
-import { gameData, k } from "./main";
+import { gameData, k } from ".";
 import type { SongCourse } from "./types";
 
 export function waitMs(ms: number, action: () => void) {

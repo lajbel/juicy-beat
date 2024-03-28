@@ -1,5 +1,5 @@
 import type * as Kaboom from "kaboom";
-import { k } from "../../main";
+import { k } from "../..";
 import { use } from "../../util/use";
 
 export interface ObjOpt<T = any> {

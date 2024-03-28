@@ -1,4 +1,4 @@
-import { gameData } from "../../main";
+import { gameData } from "../..";
 import {
     createOptions,
     createSprite,

@@ -1,5 +1,5 @@
+import { gameData, k } from "../..";
 import { songBoxHeight, songBoxWidth } from "../../config";
-import { gameData, k } from "../../main";
 import type { Song } from "../../types";
 
 export const songBoxObj = (songData: Song) => {

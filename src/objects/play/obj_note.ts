@@ -1,5 +1,5 @@
 import { Anchor, AreaComp, GameObj, Vec2 } from "kaboom";
-import { k } from "../../main";
+import { k } from "../..";
 import { NoteType, Rail } from "../../types";
 import { use } from "../../util/use";
 import { createArea, createSprite, ObjOpt } from "../common";

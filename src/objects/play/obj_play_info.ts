@@ -1,3 +1,4 @@
+import { k } from "../..";
 import {
     appearNoteOffset,
     comboZeros,
@@ -5,7 +6,6 @@ import {
     startHealth,
     uiPanelNoteSpeed,
 } from "../../config";
-import { k } from "../../main";
 import type { NoteType } from "../../types";
 import { padlZero } from "../../util";
 
