@@ -1,8 +1,8 @@
-import { createSceneLoader, k } from "..";
+import { k, kiScene } from "..";
 import { SceneState } from "../classes/SceneState";
 import { createBackground, createText } from "../objects/common";
 
-export const loadClickScene = createSceneLoader("click", () => {
+export const loadClickScene = kiScene("click", () => {
     const sceneState = new SceneState("click", () => ({}));
 
     k.add(createBackground({ color: "#000000" }));

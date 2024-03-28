@@ -1,9 +1,10 @@
 import { KaboomCtx } from "kaboom";
-import { createKaboomPlugin } from "./factories/plugin";
-import { kiScene } from "./factories/scene";
+import { createKaboomPlugin } from "./plugin";
+import { kiScene } from "./scene";
 
 const kiboomHead = {
-    createSceneLoader: kiScene,
+    kiScene,
+    createKaboomPlugin,
 };
 
 const { getK, run: kiboom } = createKaboomPlugin((k) => {

@@ -10,7 +10,7 @@ import {
     loadSongSelectionScene,
 } from "./scenes";
 
-export const { createSceneLoader } = kiboomHead;
+export const { kiScene } = kiboomHead;
 
 export const k = kaboom({
     width: 720,

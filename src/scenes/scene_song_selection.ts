@@ -1,5 +1,5 @@
 import { AudioPlay } from "kaboom";
-import { createSceneLoader, gameData, k } from "..";
+import { gameData, k, kiScene } from "..";
 import { SceneState } from "../classes/SceneState";
 import { createBackground, createSprite } from "../objects";
 import { linearSelectorObj } from "../objects/ui/obj_linear_selector";
@@ -7,7 +7,7 @@ import { songBoxObj } from "../objects/ui/obj_song_box";
 import { complexAdd } from "../util";
 
 export const loadSongSelectionScene = () =>
-    createSceneLoader("song_selection", (sceneData) => {
+    kiScene("song_selection", (sceneData) => {
         const sceneState = new SceneState(
             "song_selection",
             () => ({ selectedSong: linearSelector.selectedOption }),

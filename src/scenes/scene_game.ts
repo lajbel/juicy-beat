@@ -1,5 +1,5 @@
 import type { AudioPlay, GameObj } from "kaboom";
-import { createSceneLoader, gameData, k } from "..";
+import { gameData, k, kiScene } from "..";
 import { PlayState } from "../classes/PlayState";
 import { SceneState } from "../classes/SceneState";
 import { hitPointDistance } from "../config";
@@ -25,7 +25,7 @@ const directionByRail = (rail: Rail) => {
     }[rail];
 };
 
-export const loadGameScene = createSceneLoader("game", (_, songData) => {
+export const loadGameScene = kiScene("game", (_, songData) => {
     const sceneState = new SceneState("game", () => ({}));
     const playState = new PlayState(songData);
     const noteStack: GameObj[] = [];
