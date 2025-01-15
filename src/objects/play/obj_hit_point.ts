@@ -1,6 +1,5 @@
-import type { Vec2 } from "kaplay";
+import type { GameObj, Vec2 } from "kaplay";
 import { k } from "../../engine.js";
-import { doubleTween } from "../../util.js";
 import { createObj, createOptions, ObjOpt } from "../common/obj_base.js";
 
 const HIT_POINT_SIZE = 60;
@@ -15,6 +14,12 @@ export function createHitPoint<T>(userOpt?: ObjOpt) {
     });
 }
 
+const STARS_GOTO = [
+    k.vec2(-100, 0),
+    k.vec2(0, -100),
+    k.vec2(100, 0),
+];
+
 export const hitPointObj = (pos: Vec2) => {
     const noteHitPoint = k.make([
         k.pos(pos),
@@ -27,37 +32,20 @@ export const hitPointObj = (pos: Vec2) => {
             shape: new k.Rect(k.vec2(0), HIT_POINT_SIZE, HIT_POINT_SIZE),
         }),
         {
-            greatHit() {
+            greatHit(this: GameObj) {
                 for (let i = 0; i < 3; i++) {
                     const hitParticle = this.add([
-                        k.pos(),
+                        k.pos(0),
                         k.anchor("center"),
                         k.scale(0.5),
                         k.sprite("star"),
-                        k.opacity(),
-                        k.lifespan(0.2, { fade: 0.2 }),
+                        k.opacity(1),
+                        k.lifespan(0.1, { fade: 0.1 }),
                     ]);
 
-                    let gotoX = 0;
-
-                    if (i === 0) gotoX = -100;
-                    if (i === 1) gotoX = 0;
-                    if (i === 2) gotoX = 100;
-
-                    doubleTween(
-                        hitParticle.pos.x,
-                        gotoX,
-                        0.2,
-                        (v) => hitParticle.pos.x = v,
-                        k.easings.linear,
-                    );
-                    doubleTween(
-                        hitParticle.pos.y,
-                        hitParticle.pos.y + -100,
-                        0.2,
-                        (v) => hitParticle.pos.y = v,
-                        k.easings.linear,
-                    );
+                    k.tween(k.Vec2.ZERO, STARS_GOTO[i], 0.2, (v) => {
+                        hitParticle.pos = v;
+                    });
                 }
             },
         },

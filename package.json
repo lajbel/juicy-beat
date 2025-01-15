@@ -10,7 +10,7 @@
   "dependencies": {
     "dprint": "^0.45.0",
     "kaboom-extra": "^0.1.1",
-    "kaplay": "^3001.0.7",
+    "kaplay": "^3001.0.8",
     "tja": "^0.1.3"
   },
   "devDependencies": {

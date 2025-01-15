@@ -6,8 +6,6 @@ export const k = kaplay({
     width: 720,
     height: 720,
     letterbox: true,
-    texFilter: "nearest",
-    crisp: true,
     font: "happy",
     background: [0, 0, 0],
     plugins: [moreKeysPlugin],
