@@ -1,0 +1,87 @@
+import { AudioPlay } from "kaplay";
+import { SceneState } from "../classes/SceneState";
+import { gameData, k } from "../engine";
+import { createBackground } from "../objects/common/obj_background.js";
+import { createSprite } from "../objects/common/obj_sprite.js";
+import { linearSelectorObj } from "../objects/ui/obj_linear_selector";
+import { songBoxObj } from "../objects/ui/obj_song_box";
+import { complexAdd } from "../util";
+
+k.scene("song_selection", (sceneData) => {
+    const sceneState = new SceneState(
+        "song_selection",
+        () => ({ selectedSong: linearSelector.selectedOption }),
+    );
+    const linearSelector = k.add(linearSelectorObj());
+    // songs sorted by difficulty
+    const songs = gameData.songs.sort((a, b) =>
+        a.courses[0].difficulty - b.courses[0].difficulty
+    );
+    linearSelector.menuObjects = songs.map((songData) => songData.title);
+    linearSelector.selectedOption = sceneData.selectedSong || 0;
+    let demoSongVolume = 0;
+    let demoSong: AudioPlay | null = null;
+
+    k.add(createBackground({ color: "#ee8fcb" }));
+
+    k.add(createSprite({
+        sprite: "logo",
+        pos: k.vec2(k.center()),
+    }));
+
+    songs.forEach((songData, i) => {
+        const songBox = complexAdd(songBoxObj(songData), null, [
+            k.pos(k.center().x, 80 + (i * (100 + 20))),
+        ]);
+
+        songBox.onSelect((songData) => {
+            sceneState.setBackgroundMusic(songData.sound, {
+                loop: true,
+                volume: 0.5,
+                seek: songData.demoStart,
+            });
+        });
+    });
+
+    // Input
+    linearSelector.onChange((newSelection, oldSelection) => {
+        k.get("song")[oldSelection].deselect();
+        k.get("song")[newSelection].select();
+    });
+
+    linearSelector.onSelect(() => {
+        sceneState.changeScene(
+            "game",
+            songs[linearSelector.selectedOption],
+        );
+    });
+
+    k.onKeyPress("escape", () => {
+        sceneState.changeScene("main_menu");
+    });
+
+    k.onUpdate(() => {
+        // TEMP
+        if (k.isKeyPressed("m")) {
+            gameData.setSetting("demoMusic", !gameData.settings.demoMusic);
+        }
+        // TEMP Skin setting
+        if (k.isKeyPressed("1")) {
+            gameData.setPlayerSetting("skin", "bean");
+        }
+        if (k.isKeyPressed("2")) gameData.setPlayerSetting("skin", "bag");
+        if (k.isKeyPressed("3")) {
+            gameData.setPlayerSetting("skin", "bobo");
+        }
+        if (k.isKeyPressed("4")) gameData.setPlayerSetting("skin", "egg");
+        if (k.isKeyPressed("5")) {
+            gameData.setPlayerSetting("skin", "pineapple");
+        }
+
+        demoSongVolume = gameData.settings.demoMusic ? 0.5 : 0;
+        if (demoSong?.volume) demoSong.volume = demoSongVolume;
+    });
+
+    // Select the first song
+    k.get("song")[linearSelector.selectedOption].select();
+});

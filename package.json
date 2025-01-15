@@ -1,0 +1,21 @@
+{
+  "name": "juicy-beat",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild --bundle src/main.ts --outfile=public/game.js",
+    "dev": "esbuild --bundle src/main.ts --outfile=public/game.js --servedir=public/ --sourcemap",
+    "serve": "esbuild --servedir=.",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dprint": "^0.45.0",
+    "kaboom-extra": "^0.1.1",
+    "kaplay": "^3001.0.7",
+    "tja": "^0.1.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.8",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1"
+}

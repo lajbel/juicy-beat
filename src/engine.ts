@@ -1,0 +1,28 @@
+import { moreKeysPlugin } from "kaboom-extra";
+import kaplay from "kaplay";
+import { GameData } from "./classes/GameData.js";
+
+export const k = kaplay({
+    width: 720,
+    height: 720,
+    letterbox: true,
+    texFilter: "nearest",
+    crisp: true,
+    font: "happy",
+    background: [0, 0, 0],
+    plugins: [moreKeysPlugin],
+    pixelDensity: 1,
+    buttons: {},
+});
+
+// Save layers
+k.setLayers([
+    "background",
+    "note",
+    "player",
+    "sword",
+    "default",
+    "ui",
+], "default");
+
+export const gameData = new GameData();
