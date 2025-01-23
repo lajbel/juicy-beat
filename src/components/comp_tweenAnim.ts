@@ -1,4 +1,4 @@
-import type { LerpValue } from "kaplay";
+import type { LerpValue, Vec2 } from "kaplay";
 import { k } from "../engine";
 
 type AnimValues = {
@@ -14,8 +14,13 @@ type Animation = {
 };
 
 export function tweenAnim(anim: Animation, time: number = 0.1) {
+    let originalPos: Vec2;
+
     return {
         id: "tweenAnim",
+        add() {
+            originalPos = this.pos;
+        },
         playTAnim(animName: string) {
             const animEntry = anim[animName];
             const animKeys = Object.keys(
@@ -28,7 +33,11 @@ export function tweenAnim(anim: Animation, time: number = 0.1) {
                     animEntry.end[animKey] as LerpValue,
                     time,
                     (v) => {
-                        this[animKey] = v;
+                        if (animKey === "pos") {
+                            this["pos"] = originalPos.add(v as Vec2);
+                        } else {
+                            this[animKey] = v;
+                        }
                     },
                     k.easings.easeInOutCubic,
                 );

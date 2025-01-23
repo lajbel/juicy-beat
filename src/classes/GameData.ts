@@ -26,7 +26,7 @@ export class GameData {
             volume: 1,
         };
         this.player = k.getData("player") || {
-            skin: "bean",
+            skin: "juicy",
             sword: "sword",
         };
     }

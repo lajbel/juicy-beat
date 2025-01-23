@@ -31,7 +31,7 @@ k.scene("song_selection", (sceneData) => {
 
     songs.forEach((songData, i) => {
         const songBox = complexAdd(songBoxObj(songData), null, [
-            k.pos(k.center().x, 80 + (i * (100 + 20))),
+            k.pos(0, 80 + (i * (100 + 20))),
         ]);
 
         songBox.onSelect((songData) => {
@@ -56,30 +56,18 @@ k.scene("song_selection", (sceneData) => {
         );
     });
 
-    k.onKeyPress("escape", () => {
-        sceneState.changeScene("main_menu");
-    });
-
     k.onUpdate(() => {
         // TEMP
         if (k.isKeyPressed("m")) {
             gameData.setSetting("demoMusic", !gameData.settings.demoMusic);
         }
-        // TEMP Skin setting
-        if (k.isKeyPressed("1")) {
-            gameData.setPlayerSetting("skin", "bean");
-        }
-        if (k.isKeyPressed("2")) gameData.setPlayerSetting("skin", "bag");
-        if (k.isKeyPressed("3")) {
-            gameData.setPlayerSetting("skin", "bobo");
-        }
-        if (k.isKeyPressed("4")) gameData.setPlayerSetting("skin", "egg");
-        if (k.isKeyPressed("5")) {
-            gameData.setPlayerSetting("skin", "pineapple");
-        }
 
         demoSongVolume = gameData.settings.demoMusic ? 0.5 : 0;
         if (demoSong?.volume) demoSong.volume = demoSongVolume;
+    });
+
+    k.onKeyPress(".", () => {
+        sceneState.changeScene("editor", songs[linearSelector.selectedOption]);
     });
 
     // Select the first song

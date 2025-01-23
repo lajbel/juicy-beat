@@ -1,0 +1,73 @@
+{ "frames": [
+   {
+    "filename": "juicy (complete) #final 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 104, "h": 104 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 104, "h": 104 },
+    "sourceSize": { "w": 104, "h": 104 },
+    "duration": 100
+   },
+   {
+    "filename": "juicy (complete) #final 1.aseprite",
+    "frame": { "x": 104, "y": 0, "w": 104, "h": 104 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 104, "h": 104 },
+    "sourceSize": { "w": 104, "h": 104 },
+    "duration": 100
+   },
+   {
+    "filename": "juicy (complete) #final 2.aseprite",
+    "frame": { "x": 208, "y": 0, "w": 104, "h": 104 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 104, "h": 104 },
+    "sourceSize": { "w": 104, "h": 104 },
+    "duration": 100
+   },
+   {
+    "filename": "juicy (complete) #final 3.aseprite",
+    "frame": { "x": 312, "y": 0, "w": 104, "h": 104 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 104, "h": 104 },
+    "sourceSize": { "w": 104, "h": 104 },
+    "duration": 100
+   },
+   {
+    "filename": "juicy (complete) #final 4.aseprite",
+    "frame": { "x": 416, "y": 0, "w": 104, "h": 104 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 104, "h": 104 },
+    "sourceSize": { "w": 104, "h": 104 },
+    "duration": 100
+   },
+   {
+    "filename": "juicy (complete) #final 5.aseprite",
+    "frame": { "x": 520, "y": 0, "w": 104, "h": 104 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 104, "h": 104 },
+    "sourceSize": { "w": 104, "h": 104 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3.10.1",
+  "image": "juicy.png",
+  "format": "RGBA8888",
+  "size": { "w": 624, "h": 104 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "final", "from": 4, "to": 9, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "complete", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

@@ -1,15 +1,17 @@
-import type { AudioPlay, GameObj } from "kaplay";
+import type { AudioPlay, GameObj, Vec2 } from "kaplay";
 import { PlayState } from "../classes/PlayState.js";
 import { SceneState } from "../classes/SceneState.js";
-import { hitPointDistance } from "../config.js";
+import { HITPOINT_DISTANCE, NOTES_SPEED } from "../config.js";
 import { gameData, k } from "../engine.js";
 import { createBackground } from "../objects/common/obj_background.js";
 import { createObj } from "../objects/common/obj_base.js";
 import { hitPointObj } from "../objects/play/obj_hit_point";
+import { addBars } from "../objects/play/obj_measure_bars.js";
 import { createSingleNote, noteSliderObj } from "../objects/play/obj_note";
 import { makePlayInfoObj } from "../objects/play/obj_play_info";
-import { createPlayer } from "../objects/play/obj_player.js";
-import { swordObj } from "../objects/play/obj_sword";
+import { makePlayer } from "../objects/play/obj_player.js";
+import { addSongIntro } from "../objects/play/obj_song_titles.js";
+import { makeSwordObj } from "../objects/play/obj_sword";
 import type { Rail, Song } from "../types";
 import { isMeasureCommand, isNoteSequence, isScrollCommand } from "../types";
 import { waitMs } from "../util";
@@ -26,38 +28,21 @@ k.scene("game", (sceneData, songData) => {
     const sceneState = new SceneState("game", () => ({}));
     const playState = new PlayState(songData);
     const noteStack: GameObj[] = [];
-    const noteVel = 400;
     let playingAudio: AudioPlay | null = null;
 
     k.add(createBackground({ color: "#ee8fcb" }));
-    const player = k.add(createPlayer({ pos: k.center() }));
-    const sword = player.add(swordObj());
+    const player = k.add(makePlayer());
+    const sword = player.add(makeSwordObj());
     const playInfo = k.add(makePlayInfoObj());
-
-    const songTitle = k.add([
-        k.pos(k.center().x, 100),
-        k.anchor("center"),
-        k.text("", { size: 26 }),
-        k.opacity(),
-        k.lifespan(1, { fade: 1 }),
-    ]);
-
-    const songSubtitle = songTitle.add([
-        k.pos(0, 50),
-        k.anchor("center"),
-        k.opacity(),
-        k.text("", { size: 22 }),
-        k.lifespan(1, { fade: 1 }),
-    ]);
 
     const noteHitPoints = k.add([
         k.pos(k.center()),
         k.anchor("center"),
     ]);
 
-    noteHitPoints.add(hitPointObj(k.vec2(-hitPointDistance, 0)));
-    noteHitPoints.add(hitPointObj(k.vec2(0, -hitPointDistance)));
-    noteHitPoints.add(hitPointObj(k.vec2(hitPointDistance, 0)));
+    noteHitPoints.add(hitPointObj(k.vec2(-HITPOINT_DISTANCE, 0)));
+    noteHitPoints.add(hitPointObj(k.vec2(0, -HITPOINT_DISTANCE)));
+    noteHitPoints.add(hitPointObj(k.vec2(HITPOINT_DISTANCE, 0)));
 
     const railPoints = k.add(createObj({
         pos: k.center(),
@@ -114,7 +99,7 @@ k.scene("game", (sceneData, songData) => {
         playInfo.setCombo(playState.combo);
     }
 
-    function onHitRail(rail: Rail) {
+    function hitRail(rail: Rail) {
         const hitPoint = noteHitPoints.children[rail];
         const hittedNote = k.get("note").filter((note) =>
             hitPoint.isColliding(note) && note.state === "active"
@@ -146,14 +131,14 @@ k.scene("game", (sceneData, songData) => {
                 if (
                     hittedNote.worldPos().x > hitPoint.worldPos().x
                 ) {
-                    addScore(30, "Late", rail);
-                } else addScore(30, "Early", rail);
+                    addScore(30, "late...", rail);
+                } else addScore(30, "early...", rail);
             } else if (rail === 1) {
                 if (
                     hittedNote.worldPos().y < hitPoint.worldPos().y
                 ) {
-                    addScore(30, "Early", rail);
-                } else addScore(30, "Late", rail);
+                    addScore(30, "early...", rail);
+                } else addScore(30, "late...", rail);
             } else if (rail === 2) {
                 if (
                     hittedNote.worldPos().x < hitPoint.worldPos().x
@@ -162,10 +147,10 @@ k.scene("game", (sceneData, songData) => {
                 } else addScore(30, "Early", rail);
             }
         } else if (noteDis < 15) {
-            addScore(100, "Great!", rail);
+            addScore(100, "GREAT!", rail);
             hitPoint.greatHit();
         } else {
-            addScore(50, "Good", rail);
+            addScore(50, "GOOD", rail);
         }
 
         if (hittedNote?.index === playState.oldestNote?.index) {
@@ -182,13 +167,15 @@ k.scene("game", (sceneData, songData) => {
 
     function onHitEnd(rail: Rail) {
         const hitPoint = noteHitPoints.children[rail];
+
         const unhittedNote = k.get("note").filter((note) =>
             hitPoint.isColliding(note)
         )[0];
 
         if (!unhittedNote) return;
+
         if (unhittedNote.type === "slider") {
-            unhittedNote.enterState("miss");
+            unhittedNote.fail();
         }
     }
 
@@ -212,7 +199,7 @@ k.scene("game", (sceneData, songData) => {
         });
 
         single.use(
-            k.move(directionByRail(rail), noteVel * velMultiplier),
+            k.move(directionByRail(rail), NOTES_SPEED * velMultiplier),
         );
 
         noteStack.push(single);
@@ -226,7 +213,7 @@ k.scene("game", (sceneData, songData) => {
         const railPoint = railPoints.children[rail].worldPos();
         const slider = noteSliderObj(
             rail,
-            noteVel * velMultiplier,
+            NOTES_SPEED * velMultiplier,
             railPoint,
             noteStack.length,
         );
@@ -246,6 +233,7 @@ k.scene("game", (sceneData, songData) => {
         if (!playState.oldestNote) playState.oldestNote = slider;
 
         k.add(slider);
+        slider.start();
         return slider;
     }
 
@@ -253,13 +241,11 @@ k.scene("game", (sceneData, songData) => {
         const bpm = songData.bpm;
         const defaultMeasure = 4 / 4;
         const getDistanceTimeOfHitPoint = () =>
-            ((k.width() / 2) - hitPointDistance) / (noteVel * scrollSpeed);
+            ((k.width() / 2) - HITPOINT_DISTANCE) / (NOTES_SPEED * scrollSpeed);
         let scrollSpeed = 1;
         let musicOffset = songData.offset >= 0 ? songData.offset : 0;
         let notesOffset = songData.offset < 0 ? -songData.offset : 0;
-
-        songTitle.text = songData.title;
-        songSubtitle.text = songData.subtitle;
+        addSongIntro(songData);
 
         k.wait(musicOffset + getDistanceTimeOfHitPoint(), () => {
             playingAudio = k.play(songData.sound);
@@ -284,12 +270,14 @@ k.scene("game", (sceneData, songData) => {
 
                         const msPerNote = msPerMeasure() / noteCount;
 
-                        chartCommand.notes.forEach((note, ni) => {
+                        chartCommand.notes.forEach((note, noteIndex) => {
+                            const nextNote = chartCommand.notes[noteIndex + 1];
+
                             if (
                                 note.noteType == "1" || note.noteType == "2"
                                 || note.noteType == "3"
                             ) {
-                                waitMs(msPerNote * ni, () => {
+                                waitMs(msPerNote * noteIndex, () => {
                                     addSingle(
                                         Number(note.noteType) - 1 as Rail,
                                         scrollSpeed,
@@ -302,14 +290,14 @@ k.scene("game", (sceneData, songData) => {
                                 const sliderRail =
                                     (Number(note.noteType) - 5) as Rail;
 
-                                waitMs(msPerNote * ni, () => {
+                                waitMs(msPerNote * noteIndex, () => {
                                     curSlider = addSlider(
                                         sliderRail,
                                         scrollSpeed,
                                     );
                                 });
-                            } else if (note.noteType == "8") {
-                                waitMs(msPerNote * ni, () => {
+                            } else if (nextNote?.noteType == "8") {
+                                waitMs(msPerNote * noteIndex, () => {
                                     curSlider?.end();
                                 });
                             }
@@ -336,12 +324,23 @@ k.scene("game", (sceneData, songData) => {
         sceneState.changeScene("song_selection");
     }
 
+    k.onButtonPress("hit_left", () => {
+        player.animateLeft();
+        hitRail(0);
+    });
+
+    k.onButtonPress("hit_up", () => {
+        player.animateUp();
+        hitRail(1);
+    });
+
+    k.onButtonPress("hit_right", () => {
+        player.animateRight();
+        hitRail(2);
+    });
+
     // Input
     k.onUpdate(() => {
-        if (k.areKeysPressed(["left", "a"])) onHitRail(0);
-        if (k.areKeysPressed(["up", "w"])) onHitRail(1);
-        if (k.areKeysPressed(["right", "d"])) onHitRail(2);
-
         if (k.areKeysDown(["left", "a"])) onHitUpdate(0);
         if (k.areKeysDown(["up", "a"])) onHitUpdate(1);
         if (k.areKeysDown(["right", "a"])) onHitUpdate(2);
@@ -351,6 +350,11 @@ k.scene("game", (sceneData, songData) => {
         if (k.areKeysReleased(["right", "a"])) onHitEnd(2);
 
         if (k.isKeyPressed("escape")) exitGame();
+    });
+
+    player.animate("scale", [k.vec2(1, 1), k.vec2(1.2, 1.1)], {
+        duration: 60 / songData.bpm,
+        direction: "ping-pong",
     });
 
     if (k.isTouchscreen()) {
@@ -383,9 +387,9 @@ k.scene("game", (sceneData, songData) => {
         ]);
 
         k.onMousePress(() => {
-            if (leftArea.hasPoint(k.mousePos())) onHitRail(0);
-            if (topArea.hasPoint(k.mousePos())) onHitRail(1);
-            if (rightArea.hasPoint(k.mousePos())) onHitRail(2);
+            if (leftArea.hasPoint(k.mousePos())) hitRail(0);
+            if (topArea.hasPoint(k.mousePos())) hitRail(1);
+            if (rightArea.hasPoint(k.mousePos())) hitRail(2);
         });
 
         k.onMouseMove(() => {

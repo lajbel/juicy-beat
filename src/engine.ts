@@ -10,7 +10,20 @@ export const k = kaplay({
     background: [0, 0, 0],
     plugins: [moreKeysPlugin],
     pixelDensity: 1,
-    buttons: {},
+    buttons: {
+        "hit_left": {
+            gamepad: ["west"],
+            keyboard: ["a", "left"],
+        },
+        "hit_right": {
+            gamepad: ["east"],
+            keyboard: ["d", "right"],
+        },
+        "hit_up": {
+            gamepad: "north",
+            keyboard: ["w", "up"],
+        },
+    },
 });
 
 // Save layers

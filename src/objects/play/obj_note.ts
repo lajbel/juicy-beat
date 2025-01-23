@@ -1,4 +1,4 @@
-import { Anchor, AreaComp, GameObj, Vec2 } from "kaplay";
+import { Anchor, AreaComp, GameObj, type KEventController, Vec2 } from "kaplay";
 import { k } from "../../engine.js";
 import { NoteType, Rail } from "../../types.js";
 import { use } from "../../util/use";
@@ -114,10 +114,10 @@ export function createSingleNote(userOpt?: NoteBaseOpt<any>) {
     return newBaseNote;
 }
 
-export function createSliderNote(index: number, rail: Rail) {
-}
-
-export function addSubNote(note: GameObj) {
+export enum SLIDER_PART {
+    START,
+    MEDIUM,
+    END,
 }
 
 export function noteSliderObj(
@@ -126,6 +126,8 @@ export function noteSliderObj(
     pos: Vec2,
     index: number,
 ) {
+    let subNotesLoop: KEventController;
+
     const slider = k.make([
         k.pos(pos),
         k.layer("note"),
@@ -138,10 +140,41 @@ export function noteSliderObj(
         {
             subNotes: new Array<GameObj>(),
             subNotesCount: 0,
+            isActive: false,
             isCreationFinished: false,
             isRemovingSubNote: false,
             removedSubNotes: 0,
-            addSubNote() {
+            /** The type of the subnotes currently being created */
+            subnoteType: 0 as SLIDER_PART,
+            /** If we are in the last note */
+            isFirstNote: true,
+            isLastNote: false,
+            start() {
+                subNotesLoop = k.loop(50 / vel, () => {
+                    if (this.isFirstNote) {
+                        this.subNoteType = 0;
+                        this.isFirstNote = false;
+                    } else if (this.isLastNote) {
+                        this.subNoteType = 2;
+                    } else {
+                        this.subNoteType = 1;
+                    }
+
+                    this.addSubNote(this.subNoteType);
+                    if (this.isLastNote) subNotesLoop.cancel();
+                });
+            },
+            end() {
+                this.isLastNote = true;
+            },
+            fail() {
+                subNotesLoop.cancel();
+                this.subNotes.forEach((sn) => {
+                    sn.use(k.lifespan(0.1, { fade: 0.1 }));
+                    sn.unuse("move");
+                });
+            },
+            addSubNote(type: SLIDER_PART = 1) {
                 const posStart = this.subNotesCount === 0
                     ? this.pos.add(
                         valuesByRail(rail).dir.scale(this.subNotesCount),
@@ -152,9 +185,11 @@ export function noteSliderObj(
 
                 const subnote = k.add([
                     k.pos(posStart),
-                    k.layer("note"),
                     k.anchor(k.vec2(0, 0.28)),
-                    k.sprite("note_slider"),
+                    k.sprite("note_slider", {
+                        frame: type,
+                    }),
+                    k.rotate(90 * rail),
                     k.area(),
                     k.move(directionByRail(rail), vel),
                     k.opacity(1),
@@ -166,20 +201,8 @@ export function noteSliderObj(
                 ]);
 
                 subnote.onStateEnter("hit", () => {
-                    k.play("slice", { loop: false, volume: 0.5 });
                     subnote.unuse("move");
-                    subnote.play("cut", { loop: false });
                     subnote.enterState("destroy");
-                });
-
-                subnote.onStateEnter("miss", () => {
-                    subnote.use(k.move(k.DOWN, 100));
-                    subnote.enterState("destroy");
-                });
-
-                subnote.onStateEnter("destroy", () => {
-                    this.trigger("subnote_destroy", subnote);
-                    subnote.use(k.lifespan(0.1, { fade: 0.1 }));
                 });
 
                 subnote.onStateUpdate("destroy", () => {
@@ -248,18 +271,8 @@ export function noteSliderObj(
                     );
                 }
             },
-            end() {
-                this.isCreationFinished = true;
-            },
         },
     ]);
-
-    slider.onStateEnter("active", () => {
-        const addLoop = k.loop(50 / vel, () => {
-            if (slider.isCreationFinished) return addLoop.cancel();
-            slider.addSubNote();
-        });
-    });
 
     slider.onStateEnter("hit", () => {
         slider.unuse("move");

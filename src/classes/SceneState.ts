@@ -15,10 +15,10 @@ export class SceneState {
         if (this.saveData) k.setData(`scene.${this.name}`, this.saveData());
     }
 
-    setBackgroundMusic(music: string, options: AudioPlayOpt) {
+    setBackgroundMusic(music: string, opt?: AudioPlayOpt) {
         if (this.backgroundMusic) this.backgroundMusic.stop();
 
-        this.backgroundMusic = k.play(music, options);
+        this.backgroundMusic = k.play(music, opt);
     }
 
     changeScene(scene: string, ...args: any[]) {

@@ -37,8 +37,14 @@ export function isNoteSequence(cmd: Command): cmd is NoteSequence {
     return cmd.commandType === "__NOTESEQUENCE";
 }
 
-// Typesa
+// #region Notes Types
+
 export type Rail = 0 | 1 | 2;
+export type NoteType = "single" | "slider";
+
+// #endregion
+
+// #region SongTypes
 
 export type Song = {
     title: string;
@@ -57,4 +63,4 @@ export type SongCourse = {
     chart: Command[];
 };
 
-export type NoteType = "single" | "slider";
+// #endregion

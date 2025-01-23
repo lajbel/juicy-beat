@@ -1,43 +1,45 @@
-{
-  "frames": [
-    {
-      "filename": "note_slider 0.aseprite",
-      "frame": { "x": 0, "y": 0, "w": 55, "h": 52 },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": { "x": 3, "y": 4, "w": 55, "h": 52 },
-      "sourceSize": { "w": 60, "h": 63 },
-      "duration": 100
-    },
-    {
-      "filename": "note_slider 1.aseprite",
-      "frame": { "x": 55, "y": 0, "w": 55, "h": 52 },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": { "x": 3, "y": 4, "w": 55, "h": 52 },
-      "sourceSize": { "w": 60, "h": 63 },
-      "duration": 100
-    }
+{ "frames": [
+   {
+    "filename": "Sprite-0002 0.",
+    "frame": { "x": 0, "y": 0, "w": 55, "h": 52 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 52 },
+    "sourceSize": { "w": 55, "h": 52 },
+    "duration": 100
+   },
+   {
+    "filename": "Sprite-0002 1.",
+    "frame": { "x": 55, "y": 0, "w": 55, "h": 52 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 52 },
+    "sourceSize": { "w": 55, "h": 52 },
+    "duration": 100
+   },
+   {
+    "filename": "Sprite-0002 2.",
+    "frame": { "x": 110, "y": 0, "w": 55, "h": 52 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 52 },
+    "sourceSize": { "w": 55, "h": 52 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3.10.1",
+  "image": "note_slider.png",
+  "format": "RGBA8888",
+  "size": { "w": 165, "h": 52 },
+  "scale": "1",
+  "frameTags": [
   ],
-  "meta": {
-    "app": "https://www.aseprite.org/",
-    "version": "1.3.2-x64",
-    "image": "note_slider.png",
-    "format": "RGBA8888",
-    "size": { "w": 110, "h": 52 },
-    "scale": "1",
-    "frameTags": [
-      {
-        "name": "cut",
-        "from": 0,
-        "to": 1,
-        "direction": "forward",
-        "color": "#000000ff"
-      }
-    ],
-    "layers": [
-      { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
-    ],
-    "slices": []
-  }
+  "layers": [
+   { "name": "Layer 2", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
 }

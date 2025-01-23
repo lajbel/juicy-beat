@@ -4,7 +4,7 @@ import type { Song } from "../../types";
 
 export const songBoxObj = (songData: Song) => {
     const songBox = k.make([
-        k.pos(),
+        k.pos(0),
         k.anchor("center"),
         "song",
         {

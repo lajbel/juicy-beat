@@ -25,6 +25,7 @@ k.loadAseprite(
     "sprites/notes_skin/note_single.png",
     "sprites/notes_skin/note_single.json",
 );
+
 k.loadAseprite(
     "note_slider",
     "sprites/notes_skin/note_slider.png",
@@ -37,6 +38,11 @@ k.loadSprite("bag", "sprites/players_skin/bag.png");
 k.loadSprite("bobo", "sprites/players_skin/bobo.png");
 k.loadSprite("egg", "sprites/players_skin/egg.png");
 k.loadSprite("pineapple", "sprites/players_skin/pineapple.png");
+k.loadAseprite(
+    "juicy",
+    "sprites/players_skin/juicy.png",
+    "sprites/players_skin/juicy.json",
+);
 
 // Sounds
 k.loadSound("slice", "sounds/effects/slice.mp3");
@@ -48,10 +54,10 @@ k.loadSound("Mus_ex", "sounds/music/death_of_glamour.ogg");
 k.loadSound("snow_halation", "sounds/music/snow_halation.ogg");
 
 // TJA Charts and songs
-loadTJA("charts/koi_no_mahou.tja");
-loadTJA("charts/Gurenge.tja");
-loadTJA("charts/Heartache.tja");
-loadTJA("charts/Snow halation.tja");
+// loadTJA("charts/koi_no_mahou.tja");
+// loadTJA("charts/Gurenge.tja");
+// loadTJA("charts/Heartache.tja");
+// loadTJA("charts/Snow halation.tja");
 loadTJA("charts/Turkish March.tja");
 
 // Fonts
