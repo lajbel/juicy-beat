@@ -14,12 +14,13 @@ type UserSettings = {
 
 export class GameData {
     debug: boolean;
+    simulateMobile: boolean;
     songs: Song[];
     player: PlayerSettings;
     settings: UserSettings;
 
-    constructor() {
-        this.debug = false;
+    constructor(debug = false) {
+        this.debug = debug;
         this.songs = [];
         this.settings = k.getData("settings") || {
             demoMusic: true,

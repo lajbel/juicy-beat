@@ -1,10 +1,10 @@
+import { MusicManager } from "../classes/MusicManager.js";
 import { SceneState } from "../classes/SceneState.js";
 import { HITPOINT_DISTANCE } from "../config.js";
 import { k } from "../engine.js";
 import { hitPointObj } from "../objects/play/obj_hit_point.js";
 import { addBars } from "../objects/play/obj_measure_bars.js";
 import { makePlayer } from "../objects/play/obj_player.js";
-import { MusicManager } from "../systems/charting.js";
 import type { Song } from "../types.js";
 
 k.scene("editor", (sceneData, songData: Song) => {

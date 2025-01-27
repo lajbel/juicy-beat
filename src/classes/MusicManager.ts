@@ -120,7 +120,7 @@ export class MusicManager {
                         measureEnded = true;
                     }
 
-                    if (isNoteSequence(cmd)) {
+                    if (isNoteSequenceCmd(cmd)) {
                         cmd.notes.map((note) => {
                             measureNotes.push(note);
 
@@ -172,7 +172,34 @@ export class MusicManager {
             });
         });
     }
+
+    /**
+     * Parse the TJA notes by time for appepar
+     */
+    parseTJA(): NoteBeat[] {
+        const notes: NoteBeat[] = [];
+        const chartCommands = this.song.chart;
+        let curBpm = this.song.bpm;
+
+        chartCommands.forEach((cmd) => {
+            if (isBPMChangeCmd(cmd)) {
+                curBpm = cmd.value;
+            }
+            if (isNoteSequenceCmd(cmd)) {
+            }
+        });
+
+        return notes;
+    }
 }
+
+// #region Types
+type NoteBeat = {
+    timeMs: number;
+    type: string;
+};
+
+// #endregion
 
 // #region Assertiosn
 export function isStartCmd(cmd: Command): cmd is StartCommand {
@@ -199,7 +226,7 @@ export function isScrollCommand(cmd: Command): cmd is ScrollCommand {
 export function isDelayCommand(cmd: Command): cmd is DelayCommand {
     return cmd.commandType === "DELAY";
 }
-export function isNoteSequence(cmd: Command): cmd is NoteSequence {
+export function isNoteSequenceCmd(cmd: Command): cmd is NoteSequence {
     return cmd.commandType === "__NOTESEQUENCE";
 }
 // #endregion

@@ -36,4 +36,4 @@ k.setLayers([
     "ui",
 ], "default");
 
-export const gameData = new GameData();
+export const gameData = new GameData(true);

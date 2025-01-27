@@ -29,6 +29,7 @@ k.scene("game", (sceneData, songData) => {
     const playState = new PlayState(songData);
     const noteStack: GameObj[] = [];
     let playingAudio: AudioPlay | null = null;
+    let mobileAreas: GameObj[] = [];
 
     k.add(createBackground({ color: "#ee8fcb" }));
     const player = k.add(makePlayer());
@@ -72,6 +73,7 @@ k.scene("game", (sceneData, songData) => {
         // Update texts
         playState.score += amount + comboBonus;
         playInfo.setScore(playState.score);
+
         // Score text
         k.add([
             k.pos(hitPoint.worldPos().add(k.vec2(0, -40))),
@@ -115,6 +117,15 @@ k.scene("game", (sceneData, songData) => {
                 hitPoint.use(k.color(k.BLACK));
                 hitPoint.use(k.opacity(0.1));
                 cleanUp.cancel();
+            });
+        }
+
+        if (gameData.debug || k.isTouchscreen()) {
+            const mobileHitPoint = mobileAreas[rail];
+            mobileHitPoint.opacity = 0.3;
+
+            k.wait(0.05, () => {
+                mobileHitPoint.opacity = 0;
             });
         }
 
@@ -324,6 +335,7 @@ k.scene("game", (sceneData, songData) => {
         sceneState.changeScene("song_selection");
     }
 
+    // #region Input
     k.onButtonPress("hit_left", () => {
         player.animateLeft();
         hitRail(0);
@@ -339,7 +351,6 @@ k.scene("game", (sceneData, songData) => {
         hitRail(2);
     });
 
-    // Input
     k.onUpdate(() => {
         if (k.areKeysDown(["left", "a"])) onHitUpdate(0);
         if (k.areKeysDown(["up", "a"])) onHitUpdate(1);
@@ -352,12 +363,20 @@ k.scene("game", (sceneData, songData) => {
         if (k.isKeyPressed("escape")) exitGame();
     });
 
+    // Take a screenshot
+    k.onKeyPress("s", () => {
+        const screenshot = k.screenshot();
+        k.download("screenshot.png", screenshot);
+    });
+
+    // #endregion
+
     player.animate("scale", [k.vec2(1, 1), k.vec2(1.2, 1.1)], {
         duration: 60 / songData.bpm,
         direction: "ping-pong",
     });
 
-    if (k.isTouchscreen()) {
+    if (gameData.debug || k.isTouchscreen()) {
         const leftArea = k.add([
             k.pos(0, k.center().y),
             k.area({
@@ -367,6 +386,10 @@ k.scene("game", (sceneData, songData) => {
                     k.height() / 2,
                 ),
             }),
+            k.color(k.BLACK),
+            k.opacity(0),
+            k.layer("ui"),
+            k.rect(k.width() / 2, k.height() / 2),
         ]);
 
         const rightArea = k.add([
@@ -378,13 +401,23 @@ k.scene("game", (sceneData, songData) => {
                     k.height() / 2,
                 ),
             }),
+            k.color(k.BLACK),
+            k.opacity(0),
+            k.layer("ui"),
+            k.rect(k.width() / 2, k.height() / 2),
         ]);
 
         const topArea = k.add([
             k.area({
                 shape: new k.Rect(k.vec2(0), k.width(), k.height() / 2),
             }),
+            k.rect(k.width(), k.height() / 2),
+            k.color(k.BLACK),
+            k.opacity(0),
+            k.layer("ui"),
         ]);
+
+        mobileAreas.push(leftArea, topArea, rightArea);
 
         k.onMousePress(() => {
             if (leftArea.hasPoint(k.mousePos())) hitRail(0);

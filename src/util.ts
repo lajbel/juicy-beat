@@ -85,7 +85,7 @@ export function loadTJA(tjaPath: string, remote?: boolean) {
                         title: song.title,
                         subtitle: song.subtitle,
                         genre: song.genre,
-                        bpm: song.bpm,
+                        bpm: song.bpm ?? 120,
                         offset: song.offset,
                         demoStart: song.demoStart,
                         chart: commands,
