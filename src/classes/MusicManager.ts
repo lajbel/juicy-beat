@@ -174,9 +174,9 @@ export class MusicManager {
     }
 
     /**
-     * Parse the TJA notes by time for appepar
+     * Parse the TJA notes
      */
-    parseTJA(): NoteBeat[] {
+    parseNotes(): NoteBeat[] {
         const notes: NoteBeat[] = [];
         const chartCommands = this.song.chart;
         let curBpm = this.song.bpm;
@@ -201,7 +201,7 @@ type NoteBeat = {
 
 // #endregion
 
-// #region Assertiosn
+// #region Assert Functions
 export function isStartCmd(cmd: Command): cmd is StartCommand {
     return cmd.commandType === "START";
 }
