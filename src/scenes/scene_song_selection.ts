@@ -1,4 +1,5 @@
 import { AudioPlay } from "kaplay";
+import infoJson from "../../package.json";
 import { SceneState } from "../classes/SceneState";
 import { gameData, k } from "../engine";
 import { createBackground } from "../objects/common/obj_background.js";
@@ -56,6 +57,21 @@ k.scene("song_selection", (sceneData) => {
         );
     });
 
+    // #region Menus and Names
+    k.add([
+        k.text(`Juicy Beat! (${infoJson.version})`, {
+            size: 12,
+        }),
+        k.anchor("bot"),
+        k.pos(k.center().x, k.height()),
+    ]);
+
+    // #endregion
+
+    k.onKeyPress(".", () => {
+        sceneState.changeScene("editor", songs[linearSelector.selectedOption]);
+    });
+
     k.onUpdate(() => {
         // TEMP
         if (k.isKeyPressed("m")) {
@@ -64,10 +80,6 @@ k.scene("song_selection", (sceneData) => {
 
         demoSongVolume = gameData.settings.demoMusic ? 0.5 : 0;
         if (demoSong?.volume) demoSong.volume = demoSongVolume;
-    });
-
-    k.onKeyPress(".", () => {
-        sceneState.changeScene("editor", songs[linearSelector.selectedOption]);
     });
 
     // Select the first song

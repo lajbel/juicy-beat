@@ -1,5 +1,6 @@
 {
   "name": "juicy-beat",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "build": "esbuild --bundle src/main.ts --outfile=public/game.js",

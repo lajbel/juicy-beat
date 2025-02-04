@@ -9,7 +9,8 @@
         ],
         "moduleDetection": "force",
         "isolatedModules": true,
-        "noEmit": true
+        "noEmit": true,
+        "resolveJsonModule": true
     },
     "include": [
         "./src/**/*.ts"
