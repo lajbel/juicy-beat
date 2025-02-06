@@ -59,11 +59,11 @@ k.scene("song_selection", (sceneData) => {
 
     // #region Menus and Names
     k.add([
-        k.text(`Juicy Beat! (${infoJson.version})`, {
-            size: 12,
+        k.text(`Juicy Beat! (${infoJson.version}) - Made by lajbel`, {
+            size: 16,
         }),
         k.anchor("bot"),
-        k.pos(k.center().x, k.height()),
+        k.pos(k.center().x, k.height() - 10),
     ]);
     // #endregion
 
