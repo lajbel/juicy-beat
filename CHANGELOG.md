@@ -10,7 +10,12 @@ and this project adheres to
 
 ### Added
 
+- **AUTO MODE** added, press **A** in the song selection menu
 - Credits and version in main menu
+
+### Changed
+
+- Replaced previous music controller by a new one, more accurate
 
 ## [0.0.1]
 

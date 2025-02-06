@@ -2,6 +2,7 @@ import { moreKeysPlugin } from "kaboom-extra";
 import kaplay from "kaplay";
 import { GameData } from "./classes/GameData.js";
 
+// #region Configurations
 export const k = kaplay({
     width: 720,
     height: 720,
@@ -10,6 +11,7 @@ export const k = kaplay({
     background: [0, 0, 0],
     plugins: [moreKeysPlugin],
     pixelDensity: 1,
+    global: false,
     buttons: {
         "hit_left": {
             gamepad: ["west"],
@@ -25,8 +27,9 @@ export const k = kaplay({
         },
     },
 });
+// #endregion
 
-// Save layers
+// #region Layers
 k.setLayers([
     "background",
     "note",
@@ -35,5 +38,6 @@ k.setLayers([
     "default",
     "ui",
 ], "default");
+// #endregion
 
 export const gameData = new GameData(true);

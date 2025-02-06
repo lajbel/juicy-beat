@@ -39,7 +39,7 @@ export const makePlayInfoObj = () => {
             },
             updateHealth(amount: number) {
                 life.children.forEach((life, i) => {
-                    if (i > amount) {
+                    if (i > amount - 1) {
                         life.use(k.sprite("fail"));
                     }
                 });

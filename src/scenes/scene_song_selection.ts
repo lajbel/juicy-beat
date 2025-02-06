@@ -65,8 +65,17 @@ k.scene("song_selection", (sceneData) => {
         k.anchor("bot"),
         k.pos(k.center().x, k.height()),
     ]);
-
     // #endregion
+
+    k.onKeyPress("a", () => {
+        sceneState.changeScene(
+            "game",
+            songs[linearSelector.selectedOption],
+            {
+                auto: true,
+            },
+        );
+    });
 
     k.onKeyPress(".", () => {
         sceneState.changeScene("editor", songs[linearSelector.selectedOption]);

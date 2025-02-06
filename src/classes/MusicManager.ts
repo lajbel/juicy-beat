@@ -7,6 +7,7 @@ import type {
     GoGoEndCommand,
     GoGoStartCommand,
     MeasureCommand,
+    Note,
     NoteSequence,
     ScrollCommand,
     StartCommand,
@@ -37,11 +38,18 @@ export class MusicManager {
     private _curTime = 0;
     private _curBeat = 0;
     private _curMeasure = 0;
+    private _curNote = 0;
+    private _measure = 0;
+    private _bpm = 0;
+    private _notesMap: NoteBeat[] = [];
+
     song: Song;
     currentMeasure = 0;
 
     constructor(song: Song) {
         this.song = song;
+        this._bpm = song.bpm ?? 120;
+        this._measure = DEF_MEASURE;
     }
 
     set currentBeat(beat: number) {
@@ -69,10 +77,25 @@ export class MusicManager {
     }
 
     /**
+     * When a new note appear
+     */
+    onNote(action: (note: NoteBeat) => any) {
+        this._events.on("note", action);
+    }
+
+    /**
      * When a new beat starts
      */
     onBeat(action: (b: number, nextBeatTime: number) => void) {
         this._events.on("beat", action);
+    }
+
+    getMsPerMeasure() {
+        return 60000 * this._measure * 4 / this._bpm;
+    }
+
+    getMsPerBeat() {
+        return 6000 / this._bpm;
     }
 
     /**
@@ -82,23 +105,17 @@ export class MusicManager {
         const chartCommands = this.song.chart;
         const musicOffset = this.song.offset >= 0 ? this.song.offset : 0;
         const notesOffset = this.song.offset < 0 ? -this.song.offset : 0;
-        const measure = DEF_MEASURE;
         let bpm = this.song.bpm;
 
-        const msPerMeasure = () => {
-            return 60000 * measure * 4 / bpm;
-        };
-
-        const msPerBeat = () => {
-            return 60000 / bpm;
-        };
-
+        // wait for song audio to start...
         this._startSongWait = k.wait(musicOffset + timeForHit(), () => {
             this._events.trigger("start_song");
         });
 
+        // wait for notes offset...
         this._startNotesWait = k.wait(notesOffset, () => {
             this._events.trigger("start_notes");
+            this.parseNotes();
 
             // current progress in tja
             let lineIndex = 0;
@@ -110,7 +127,7 @@ export class MusicManager {
                 this._events.trigger(
                     "measure",
                     this._curMeasure,
-                    msPerMeasure(),
+                    this.getMsPerMeasure(),
                 );
 
                 const executeCommands = () => {
@@ -153,23 +170,40 @@ export class MusicManager {
             };
 
             const nextBeat = () => {
-                this._events.trigger("beat", this._curBeat, msPerBeat());
+                this._events.trigger(
+                    "beat",
+                    this._curBeat,
+                    this.getMsPerBeat(),
+                );
                 this._curBeat++;
             };
 
+            const nextNote = () => {
+                this._events.trigger("note", this._notesMap[this._curNote]);
+                this._curNote++;
+            };
+
+            // #region Song Loop
             k.onUpdate(() => {
                 if (this._ended) return;
 
                 this._curTime += k.dt() * 1000;
 
-                if (this._curTime >= msPerBeat() * this._curBeat) {
+                if (this._curTime >= this.getMsPerBeat() * this._curBeat) {
                     nextBeat();
                 }
 
-                if (this._curTime >= msPerMeasure() * this._curMeasure) {
+                if (
+                    this._curTime >= this.getMsPerMeasure() * this._curMeasure
+                ) {
                     nextMeasure();
                 }
+
+                if (this._curTime >= this._notesMap[this._curNote].timeMs) {
+                    nextNote();
+                }
             });
+            // #endregion
         });
     }
 
@@ -179,16 +213,34 @@ export class MusicManager {
     parseNotes(): NoteBeat[] {
         const notes: NoteBeat[] = [];
         const chartCommands = this.song.chart;
-        let curBpm = this.song.bpm;
+        let parseMeasure = 0;
 
         chartCommands.forEach((cmd) => {
             if (isBPMChangeCmd(cmd)) {
-                curBpm = cmd.value;
+                this._bpm = cmd.value;
             }
             if (isNoteSequenceCmd(cmd)) {
+                let notesWithoutEnd = cmd.notes.filter(note =>
+                    !note.isMeasureEnd
+                );
+                let noteMs = this.getMsPerMeasure() / notesWithoutEnd.length
+                    - 1;
+
+                cmd.notes.forEach((note, i) => {
+                    if (note.isMeasureEnd) {
+                        return parseMeasure++;
+                    }
+
+                    notes.push({
+                        timeMs: this.getMsPerMeasure() * parseMeasure
+                            + noteMs * i,
+                        type: note.noteType,
+                    });
+                });
             }
         });
 
+        this._notesMap = notes;
         return notes;
     }
 }
@@ -229,4 +281,5 @@ export function isDelayCommand(cmd: Command): cmd is DelayCommand {
 export function isNoteSequenceCmd(cmd: Command): cmd is NoteSequence {
     return cmd.commandType === "__NOTESEQUENCE";
 }
+
 // #endregion

@@ -1,5 +1,6 @@
 import { Anchor, AreaComp, GameObj, type KEventController, Vec2 } from "kaplay";
 import { k } from "../../engine.js";
+import { HITPOINTS } from "../../scenes/scene_game.js";
 import { NoteType, Rail } from "../../types.js";
 import { use } from "../../util/use";
 import { createArea } from "../common/obj_area.js";
@@ -13,6 +14,24 @@ const directionByRail = (rail: Rail) => {
         "2": k.LEFT,
     }[rail];
 };
+
+const ANCHORDIR_BY_RAIL: {
+    anchor: Vec2;
+    dir: Vec2;
+}[] = [
+    {
+        anchor: k.RIGHT,
+        dir: k.vec2(-1, 0),
+    },
+    {
+        anchor: k.DOWN,
+        dir: k.vec2(0, 1),
+    },
+    {
+        anchor: k.LEFT,
+        dir: k.vec2(1, 0),
+    },
+];
 
 const valuesByRail = (rail: Rail) => {
     return {
@@ -31,21 +50,111 @@ const valuesByRail = (rail: Rail) => {
     }[rail];
 };
 
-const NOTE_RANK = [
+// #region Note component
+export function note(type: NoteType, index: number, rail: Rail) {
+    const hitPoint = HITPOINTS[rail];
+
+    return {
+        id: "note",
+        type,
+        index,
+        rail,
+        note_movementSpeed: 1,
+        note_moveDir: ANCHORDIR_BY_RAIL[rail],
+        note_autoMode: false,
+        getHitpointDist() {
+            return this.pos.dist(hitPoint);
+        },
+        isLate() {
+            if (rail == 0 && this.pos.x < hitPoint.x) return true;
+            else if (rail == 1 && this.pos.y < hitPoint.y) return true;
+            else if (rail == 2 && this.pos.x > hitPoint.x) return true;
+            else return false;
+        },
+        isEarly() {
+            if (rail == 0 && this.pos.x < hitPoint.x) return false;
+            else if (rail == 1 && this.pos.y < hitPoint.y) return false;
+            else if (rail == 2 && this.pos.x > hitPoint.x) return false;
+            else return true;
+        },
+        update() {
+            if (this.note_autoMode) {
+                const hitPoint = HITPOINTS[rail];
+
+                if (hitPoint.dist(this.pos) <= 3 && this.state == "active") {
+                    this.enterState("hit");
+                }
+            }
+        },
+    };
+}
+// #endregion
+
+const NOTE_STATES = [
     "active",
     "hit",
     "miss",
     "destroy",
 ];
 
-export function noteComp(type: NoteType, index: number, rail: Rail) {
-    return {
-        id: "note",
-        type,
-        index,
-        rail,
-    };
+// #region Single Note (Apples)
+const NOTE_AREA = new k.Rect(k.vec2(0), 63, 63);
+export type SingleGameObj = ReturnType<typeof addSingle>;
+
+export function addSingle(rail: Rail, index: number) {
+    // Note base
+    const singleNote = k.add([
+        note("single", index, rail),
+        k.pos(),
+        k.anchor("center"),
+        k.state("active", NOTE_STATES),
+        {
+            note_sprite: null as GameObj,
+            note_hitPoint: null as GameObj<AreaComp>,
+        },
+    ]);
+
+    // The real single note is only an area object
+    const noteHitPoint = singleNote.add([
+        k.area({
+            shape: NOTE_AREA,
+        }),
+        k.anchor("center"),
+    ]);
+    singleNote.note_hitPoint = noteHitPoint;
+
+    // Note sprite
+    const noteSprite = singleNote.add([
+        k.sprite("note_single"),
+        k.anchor(k.vec2(0, 0.28)),
+        k.opacity(1),
+        k.pos(),
+    ]);
+    singleNote.note_sprite = noteSprite;
+
+    // Note states
+    singleNote.onStateEnter("hit", () => {
+        k.play("slice", { loop: false, volume: 0.5, speed: 2 });
+        noteSprite.play("hit", { loop: false });
+        singleNote.enterState("miss");
+    });
+
+    singleNote.onStateEnter("miss", () => {
+        singleNote.enterState("destroy");
+    });
+
+    singleNote.onStateEnter("destroy", () => {
+        singleNote.unuse("move");
+        noteSprite.use(k.lifespan(0.1, { fade: 0.1 }));
+    });
+
+    noteSprite.onDestroy(() => {
+        singleNote.destroy();
+    });
+
+    return singleNote;
 }
+// #endregion
 
 export interface NoteBaseOpt<T> extends ObjOpt<T> {
     type?: NoteType;
@@ -65,7 +174,7 @@ export function createNoteBase<T>(userOpt?: NoteBaseOpt<T>) {
     const obj = createArea(opt);
 
     const newObj = use(obj, [
-        k.state("active", NOTE_RANK),
+        k.state("active", NOTE_STATES),
         k.opacity(1),
         {
             type: opt.type,
@@ -135,8 +244,8 @@ export function noteSliderObj(
         k.opacity(1),
         k.anchor(valuesByRail(rail).anchor as Anchor),
         k.area({ shape: new k.Rect(k.vec2(0), 0, 0) }),
-        k.state("active", NOTE_RANK),
-        noteComp("slider", index, rail),
+        k.state("active", NOTE_STATES),
+        note("slider", index, rail),
         {
             subNotes: new Array<GameObj>(),
             subNotesCount: 0,
@@ -193,7 +302,7 @@ export function noteSliderObj(
                     k.area(),
                     k.move(directionByRail(rail), vel),
                     k.opacity(1),
-                    k.state("active", NOTE_RANK),
+                    k.state("active", NOTE_STATES),
                     "subnote",
                     {
                         rail,
