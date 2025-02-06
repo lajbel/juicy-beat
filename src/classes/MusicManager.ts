@@ -95,17 +95,15 @@ export class MusicManager {
     }
 
     getMsPerBeat() {
-        return 6000 / this._bpm;
+        return 60000 / this._bpm;
     }
 
     /**
      * Start the song reproduction
      */
     start() {
-        const chartCommands = this.song.chart;
         const musicOffset = this.song.offset >= 0 ? this.song.offset : 0;
         const notesOffset = this.song.offset < 0 ? -this.song.offset : 0;
-        let bpm = this.song.bpm;
 
         // wait for song audio to start...
         this._startSongWait = k.wait(musicOffset + timeForHit(), () => {
@@ -117,56 +115,12 @@ export class MusicManager {
             this._events.trigger("start_notes");
             this.parseNotes();
 
-            // current progress in tja
-            let lineIndex = 0;
-
             const nextMeasure = () => {
-                let measureNotes = [];
-                let measureEnded = false;
-
                 this._events.trigger(
                     "measure",
                     this._curMeasure,
                     this.getMsPerMeasure(),
                 );
-
-                const executeCommands = () => {
-                    const cmd = chartCommands[lineIndex];
-
-                    if (isStartCmd(cmd)) {
-                        measureEnded = true;
-                    }
-
-                    if (isNoteSequenceCmd(cmd)) {
-                        cmd.notes.map((note) => {
-                            measureNotes.push(note);
-
-                            if (note.isMeasureEnd) {
-                                measureEnded = true;
-                            }
-                        });
-                    }
-
-                    if (isBPMChangeCmd(cmd)) {
-                        bpm = cmd.value;
-                        console.debug("BPM changed to", bpm);
-                    }
-
-                    if (isEndCmd(cmd)) {
-                        this._ended = true;
-                        measureEnded = true;
-                    }
-
-                    lineIndex++;
-
-                    if (measureEnded) {
-                        this._curMeasure++;
-                    } else {
-                        return executeCommands();
-                    }
-                };
-
-                executeCommands();
             };
 
             const nextBeat = () => {
@@ -179,8 +133,15 @@ export class MusicManager {
             };
 
             const nextNote = () => {
+                const note = this._notesMap[this._curNote];
+
                 this._events.trigger("note", this._notesMap[this._curNote]);
                 this._curNote++;
+
+                if (note.type == "BPM_CHANGE") {
+                    this._bpm = note.value;
+                    console.log("[song loop] BPM changed to", this._bpm);
+                }
             };
 
             // #region Song Loop
@@ -215,9 +176,19 @@ export class MusicManager {
         const chartCommands = this.song.chart;
         let parseMeasure = 0;
 
+        notes.push({
+            timeMs: 0,
+            type: "BPM_CHANGE",
+            value: this.song.bpm ?? 120,
+        });
+
         chartCommands.forEach((cmd) => {
             if (isBPMChangeCmd(cmd)) {
-                this._bpm = cmd.value;
+                notes.push({
+                    timeMs: this.getMsPerMeasure() * parseMeasure,
+                    type: "BPM_CHANGE",
+                    value: cmd.value,
+                });
             }
             if (isNoteSequenceCmd(cmd)) {
                 let notesWithoutEnd = cmd.notes.filter(note =>
@@ -249,6 +220,7 @@ export class MusicManager {
 type NoteBeat = {
     timeMs: number;
     type: string;
+    value?: number;
 };
 
 // #endregion

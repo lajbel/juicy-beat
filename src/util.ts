@@ -50,54 +50,96 @@ export function complexAdd<T extends KA.Comp, T2>(
     return newObj;
 }
 
-export function loadTJA(tjaPath: string, remote?: boolean) {
+const parseSong = async (
+    tja: string,
+    remote = false,
+    customSound?: string,
+) => {
+    try {
+        const song = TJAParser.parse(tja);
+        const commands = song.courses[0]?.singleCourse
+            .getCommands();
+
+        const soungCourses: SongCourse[] = [];
+
+        song.courses.forEach((course) => {
+            soungCourses.push({
+                difficulty: course.stars,
+                chart: course.singleCourse.getCommands(),
+            });
+        });
+
+        if (!song.wave) throw new Error("No sound file found");
+        if (!song.title) throw new Error("No title found");
+        if (!song.subtitle) throw new Error("No subtitle found");
+        //         if (!song.genre) throw new Error("No genre found");
+        if (!song.bpm) throw new Error("No BPM found");
+
+        let soundPath;
+
+        if (customSound) {
+            soundPath = customSound;
+        } else if (remote) {
+            soundPath = song.wave;
+        } else {
+            soundPath = `sounds/music/${song.wave}`;
+        }
+
+        await k.loadSound(song.wave.slice(0, -3), soundPath);
+
+        const songData = {
+            title: song.title,
+            subtitle: song.subtitle,
+            genre: song.genre,
+            bpm: song.bpm ?? 120,
+            offset: song.offset,
+            demoStart: song.demoStart,
+            chart: commands,
+            sound: song.wave.slice(0, -3),
+            courses: soungCourses,
+        };
+
+        gameData.songs.push(songData);
+
+        console.log(`TJA loaded ${song.title}`);
+
+        return songData;
+    } catch (e) {
+        throw new Error("Error parsing TJA file " + e);
+    }
+};
+
+export function loadTJA(
+    tjaPath: string,
+    remote?: boolean,
+    customSong?: {
+        songBase64: string;
+        songTJA: string;
+    },
+) {
     return k.load(
         new Promise((resolve, reject) => {
-            fetch(tjaPath).then((response) => {
-                return response.text();
-            }).then(async (text) => {
-                try {
-                    const song = TJAParser.parse(text);
-                    const commands = song.courses[0]?.singleCourse
-                        .getCommands();
-
-                    const soungCourses: SongCourse[] = [];
-
-                    song.courses.forEach((course) => {
-                        soungCourses.push({
-                            difficulty: course.stars,
-                            chart: course.singleCourse.getCommands(),
-                        });
-                    });
-
-                    if (!song.wave) return reject("No sound file found");
-                    if (!song.title) return reject("No title found");
-                    if (!song.subtitle) return reject("No subtitle found");
-                    if (!song.genre) return reject("No genre found");
-                    if (!song.bpm) return reject("No BPM found");
-
-                    const soundPath = remote
-                        ? song.wave
-                        : `sounds/music/${song.wave}`;
-                    await k.loadSound(song.wave.slice(0, -3), soundPath);
-
-                    gameData.songs.push({
-                        title: song.title,
-                        subtitle: song.subtitle,
-                        genre: song.genre,
-                        bpm: song.bpm ?? 120,
-                        offset: song.offset,
-                        demoStart: song.demoStart,
-                        chart: commands,
-                        sound: song.wave.slice(0, -3),
-                        courses: soungCourses,
-                    });
-
+            if (customSong) {
+                parseSong(
+                    customSong.songTJA,
+                    remote,
+                    customSong.songBase64,
+                ).then((song) => {
                     resolve(song);
-                } catch (e) {
-                    reject("Error parsing TJA file");
-                }
-            });
+                }).catch((e) => {
+                    reject(e);
+                });
+            } else {
+                fetch(tjaPath).then((response) => {
+                    return response.text();
+                }).then((r) => {
+                    parseSong(r, remote).then((song) => {
+                        resolve(song);
+                    }).catch((e) => {
+                        reject(e);
+                    });
+                });
+            }
         }),
     );
 }

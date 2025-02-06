@@ -7,6 +7,7 @@ import { gameData, k } from "../engine.js";
 import { createBackground } from "../objects/common/obj_background.js";
 import { createObj } from "../objects/common/obj_base.js";
 import { hitPointObj } from "../objects/play/obj_hit_point";
+import { addBars } from "../objects/play/obj_measure_bars.js";
 import { addSingle, type SingleGameObj } from "../objects/play/obj_note";
 import { makePlayInfoObj } from "../objects/play/obj_play_info";
 import { makePlayer } from "../objects/play/obj_player.js";
@@ -270,6 +271,11 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
         hitRail(2);
     });
 
+    k.onKeyPress("escape", () => {
+        playingAudio?.stop();
+        sceneState.changeScene("song_selection");
+    });
+
     // Take a screenshot
     k.onKeyPress("s", () => {
         const screenshot = k.screenshot();
@@ -299,6 +305,7 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
             finishPlay();
         });
     });
+
     // #endregion
 
     player.animate("scale", [k.vec2(1, 1), k.vec2(1.2, 1.1)], {

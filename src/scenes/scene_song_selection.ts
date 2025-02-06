@@ -77,6 +77,12 @@ k.scene("song_selection", (sceneData) => {
         );
     });
 
+    k.onKeyPress("d", () => {
+        sceneState.changeScene(
+            "debug_song",
+        );
+    });
+
     k.onKeyPress(".", () => {
         sceneState.changeScene("editor", songs[linearSelector.selectedOption]);
     });
@@ -92,5 +98,8 @@ k.scene("song_selection", (sceneData) => {
     });
 
     // Select the first song
-    k.get("song")[linearSelector.selectedOption].select();
+    const nowSong = k.get("song")[linearSelector.selectedOption]
+        ?? k.get("song")[0];
+
+    nowSong.select();
 });
