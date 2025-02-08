@@ -14,6 +14,10 @@ and this project adheres to
 - New songs, **Startup Parade Remix** and **Next-level Cityscape**
 - **AUTO MODE** added, press **A** in the song selection menu
 - Credits and version in main menu
+- BPM change support
+- Load new songs, press **D** in song selection menu, then load an ogg and tja
+  (**very experimental phase**)
+- Added Juicy Love
 
 ### Changed
 
@@ -21,6 +25,10 @@ and this project adheres to
 - Replaced previous music controller by a new one, more accurate
 - Sword sprite slighty modified
 - Turkish March chart updated
+
+### Fixed
+
+- Now you can loose
 
 ## [0.0.1]
 
