@@ -17,10 +17,12 @@ export const makePlayer = () => {
         k.sprite(gameData.player.skin),
         k.pos(k.center().add(0, 40)),
         k.anchor("bot"),
-        k.animate(),
         k.scale(1),
         {
             framesito: 0,
+            scaleFactorX: 1,
+            scaleX: 1,
+            scaleY: 1,
             direction: "front",
             animateSide(side: SIDE) {
                 if (this.direction === side) {
@@ -34,13 +36,15 @@ export const makePlayer = () => {
                 const anim = this.framesito == 0 ? 1 : 0;
 
                 k.tween(1, 0, 0.1, (v) => {
-                    this.scale = k.vec2(v, 1);
+                    this.scaleFactorX = v;
+                    this.updateScale();
                 }).onEnd(() => {
                     this.frame = ANIM_FRAMES[side][anim];
                 });
 
                 k.tween(0, 1, 0.1, (v) => {
-                    this.scale = k.vec2(v, 1);
+                    this.scaleFactorX = v;
+                    this.updateScale();
                 });
 
                 this.direction = side;
@@ -54,6 +58,12 @@ export const makePlayer = () => {
             },
             animateRight() {
                 this.animateSide(SIDE.RIGHT);
+            },
+            updateScale() {
+                this.scale = k.vec2(
+                    this.scaleX * this.scaleFactorX,
+                    this.scaleY,
+                );
             },
         },
     ]);

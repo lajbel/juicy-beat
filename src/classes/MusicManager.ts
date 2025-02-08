@@ -40,7 +40,7 @@ export class MusicManager {
     private _curMeasure = 0;
     private _curNote = 0;
     private _measure = 0;
-    private _bpm = 0;
+    bpm: number;
     private _notesMap: NoteBeat[] = [];
 
     song: Song;
@@ -48,7 +48,7 @@ export class MusicManager {
 
     constructor(song: Song) {
         this.song = song;
-        this._bpm = song.bpm ?? 120;
+        this.bpm = song.bpm ?? 120;
         this._measure = DEF_MEASURE;
     }
 
@@ -90,12 +90,12 @@ export class MusicManager {
         this._events.on("beat", action);
     }
 
-    getMsPerMeasure() {
-        return 60000 * this._measure * 4 / this._bpm;
+    getMsPerMeasure(bpm?: number) {
+        return 60000 * this._measure * 4 / (bpm ?? this.bpm);
     }
 
-    getMsPerBeat() {
-        return 60000 / this._bpm;
+    getMsPerBeat(bpm?: number) {
+        return 60000 / (bpm ?? this.bpm);
     }
 
     /**
@@ -114,6 +114,11 @@ export class MusicManager {
         this._startNotesWait = k.wait(notesOffset, () => {
             this._events.trigger("start_notes");
             this.parseNotes();
+
+            console.log(
+                "[song setup] notes on this song:",
+                this._notesMap.length,
+            );
 
             const nextMeasure = () => {
                 this._events.trigger(
@@ -135,13 +140,20 @@ export class MusicManager {
             const nextNote = () => {
                 const note = this._notesMap[this._curNote];
 
-                this._events.trigger("note", this._notesMap[this._curNote]);
-                this._curNote++;
+                console.log(
+                    "[song loop] triggering note",
+                    note.type,
+                    this._curNote,
+                );
+
+                this._events.trigger("note", note);
 
                 if (note.type == "BPM_CHANGE") {
-                    this._bpm = note.value;
-                    console.log("[song loop] BPM changed to", this._bpm);
+                    this.bpm = note.value;
+                    console.log("[song loop] BPM changed to", this.bpm);
                 }
+
+                this._curNote++;
             };
 
             // #region Song Loop
@@ -160,7 +172,7 @@ export class MusicManager {
                     nextMeasure();
                 }
 
-                if (this._curTime >= this._notesMap[this._curNote].timeMs) {
+                if (this._curTime >= this._notesMap?.[this._curNote]?.timeMs) {
                     nextNote();
                 }
             });
@@ -175,39 +187,50 @@ export class MusicManager {
         const notes: NoteBeat[] = [];
         const chartCommands = this.song.chart;
         let parseMeasure = 0;
+        let parseBpm = this.song.bpm ?? 120;
+        let parseTime = 0;
 
         notes.push({
             timeMs: 0,
             type: "BPM_CHANGE",
-            value: this.song.bpm ?? 120,
+            value: parseBpm,
         });
 
         chartCommands.forEach((cmd) => {
-            if (isBPMChangeCmd(cmd)) {
-                notes.push({
-                    timeMs: this.getMsPerMeasure() * parseMeasure,
-                    type: "BPM_CHANGE",
-                    value: cmd.value,
-                });
-            }
             if (isNoteSequenceCmd(cmd)) {
                 let notesWithoutEnd = cmd.notes.filter(note =>
                     !note.isMeasureEnd
                 );
-                let noteMs = this.getMsPerMeasure() / notesWithoutEnd.length
+
+                let noteMs =
+                    this.getMsPerMeasure(parseBpm) / notesWithoutEnd.length
                     - 1;
 
                 cmd.notes.forEach((note, i) => {
                     if (note.isMeasureEnd) {
-                        return parseMeasure++;
+                        parseTime += this.getMsPerMeasure(parseBpm);
+                        parseMeasure++;
+
+                        return;
                     }
 
                     notes.push({
-                        timeMs: this.getMsPerMeasure() * parseMeasure
-                            + noteMs * i,
+                        timeMs: parseTime + noteMs * i,
                         type: note.noteType,
                     });
                 });
+            }
+
+            if (isBPMChangeCmd(cmd)) {
+                notes.push({
+                    timeMs: this.getMsPerMeasure(parseBpm) * parseMeasure,
+                    type: "BPM_CHANGE",
+                    value: cmd.value,
+                });
+
+                console.log("[notes parsing]", "bpm changed to", cmd.value);
+
+                parseBpm = cmd.value;
             }
         });
 

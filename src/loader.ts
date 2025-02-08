@@ -59,6 +59,8 @@ k.loadSound("snow_halation", "sounds/music/snow_halation.ogg");
 // loadTJA("charts/Heartache.tja");
 // loadTJA("charts/Snow halation.tja");
 loadTJA("charts/Turkish March.tja");
+loadTJA("charts/Startup Parade Remix.tja");
+loadTJA("charts/Next-level Cityscape.tja");
 
 // Fonts
 k.loadBitmapFont("happy", "sprites/happy_28x36.png", 28, 36);

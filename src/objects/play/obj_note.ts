@@ -134,8 +134,8 @@ export function addSingle(rail: Rail, index: number) {
 
     // Note states
     singleNote.onStateEnter("hit", () => {
-        k.play("slice", { loop: false, volume: 0.5, speed: 2 });
-        noteSprite.play("hit", { loop: false });
+        k.play("slice", { loop: false, volume: 1, speed: 4 });
+        noteSprite.frame = 1;
         singleNote.enterState("miss");
     });
 
@@ -145,7 +145,7 @@ export function addSingle(rail: Rail, index: number) {
 
     singleNote.onStateEnter("destroy", () => {
         singleNote.unuse("move");
-        noteSprite.use(k.lifespan(0.1, { fade: 0.1 }));
+        noteSprite.use(k.lifespan(0, { fade: 0.3 }));
     });
 
     noteSprite.onDestroy(() => {
@@ -206,7 +206,7 @@ export function createSingleNote(userOpt?: NoteBaseOpt<any>) {
 
     newBaseNote.onStateEnter("hit", () => {
         k.play("slice", { loop: false, volume: 0.5 });
-        newBaseNote.noteSprite.play("hit", { loop: false });
+        newBaseNote.noteSprite.frame = 1;
         newBaseNote.enterState("miss");
     });
 

@@ -2,6 +2,8 @@ import { moreKeysPlugin } from "kaboom-extra";
 import kaplay from "kaplay";
 import { GameData } from "./classes/GameData.js";
 
+const devMode = false;
+
 // #region Configurations
 export const k = kaplay({
     width: 720,
@@ -12,6 +14,7 @@ export const k = kaplay({
     plugins: [moreKeysPlugin],
     pixelDensity: 1,
     global: false,
+    debug: devMode,
     buttons: {
         "hit_left": {
             gamepad: ["west"],
@@ -40,4 +43,5 @@ k.setLayers([
 ], "default");
 // #endregion
 
-export const gameData = new GameData(true);
+// TODO: Dynamic debug mode
+export const gameData = new GameData(devMode);

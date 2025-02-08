@@ -15,9 +15,10 @@ k.scene("song_selection", (sceneData) => {
     );
     const linearSelector = k.add(linearSelectorObj());
     // songs sorted by difficulty
-    const songs = gameData.songs.sort((a, b) =>
-        a.courses[0].difficulty - b.courses[0].difficulty
-    );
+    const songs = gameData.songs.reverse();
+    // .sort((a, b) =>
+    //  a.courses[0].difficulty - b.courses[0].difficulty
+    // );
     linearSelector.menuObjects = songs.map((songData) => songData.title);
     linearSelector.selectedOption = sceneData.selectedSong || 0;
     let demoSongVolume = 0;

@@ -6,16 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.2]
+## [0.0.2] - 7/2/2024
 
 ### Added
 
+- Now the player dances with the BPM
+- New songs, **Startup Parade Remix** and **Next-level Cityscape**
 - **AUTO MODE** added, press **A** in the song selection menu
 - Credits and version in main menu
 
 ### Changed
 
+- Now "GREAT!" message is coloured
 - Replaced previous music controller by a new one, more accurate
+- Sword sprite slighty modified
+- Turkish March chart updated
 
 ## [0.0.1]
 

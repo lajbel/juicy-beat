@@ -1,4 +1,5 @@
 import type { AudioPlay, GameObj } from "kaplay";
+import { lerp } from "kaplay/dist/declaration/math/math.js";
 import { MusicManager } from "../classes/MusicManager.js";
 import { PlayState } from "../classes/PlayState.js";
 import { SceneState } from "../classes/SceneState.js";
@@ -95,8 +96,35 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
     });
 
     // #region Scoring Messages
-    function addScoreAndMesssage(amount: number, message: string, rail: Rail) {
+    const scores = {
+        "great": {
+            message: "GREAT!",
+            score: 100,
+        },
+        "good": {
+            message: "GOOD",
+            score: 50,
+        },
+        "late": {
+            message: "late...",
+            score: 15,
+        },
+        "early": {
+            message: "early...",
+            score: 15,
+        },
+        "miss": {
+            message: "missed...",
+            score: 0,
+        },
+    };
+
+    type ScoreType = keyof typeof scores;
+
+    function addScoreAndMesssage(scoreType: ScoreType, rail: Rail) {
+        const scoreData = scores[scoreType];
         const hitPoint = noteHitPoints.children[rail];
+
         // Combo bonuses
         let comboBonus = 0;
         if (playState.combo >= 10) comboBonus = 10;
@@ -106,15 +134,26 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
         if (playState.combo >= 200) comboBonus = 200;
         if (playState.combo >= 500) comboBonus = 500;
         if (playState.combo >= 1000) comboBonus = 1000;
+
         // Update texts
-        playState.score += amount + comboBonus;
+        playState.score += scoreData.score + comboBonus;
         playInfo.setScore(playState.score);
 
         // Score text
         k.add([
             k.pos(hitPoint.worldPos().add(k.vec2(0, -40))),
             k.anchor("top"),
-            k.text(message, { size: 18, align: "center" }),
+            k.text(scoreData.message, {
+                size: 18,
+                align: "center",
+                transform: (idx) => ({
+                    color: scoreType != "great" ? k.WHITE : k.hsl2rgb(
+                        (k.time() * 0.1 + idx * 0.1) % 1,
+                        0.9,
+                        0.9,
+                    ),
+                }),
+            }),
             k.move(k.UP, 100),
             k.opacity(),
             k.lifespan(0.4, { fade: 0.4 }),
@@ -128,7 +167,8 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
 
     function registerMiss(rail: Rail) {
         k.shake(2);
-        addScoreAndMesssage(0, "Miss", rail);
+        addScoreAndMesssage("miss", rail);
+
         playState.noteIndex++;
         playState.oldestNote = noteStack[playState.noteIndex];
         playState.health--;
@@ -197,15 +237,15 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
             // Aplicate score
             if (noteDis > 30) {
                 if (singleNote.isLate()) {
-                    addScoreAndMesssage(30, "late...", rail);
+                    addScoreAndMesssage("late", rail);
                 } else {
-                    addScoreAndMesssage(30, "early...", rail);
+                    addScoreAndMesssage("early", rail);
                 }
             } else if (noteDis < 15) {
-                addScoreAndMesssage(100, "GREAT!", rail);
+                addScoreAndMesssage("great", rail);
                 hitPoint.greatHit();
             } else {
-                addScoreAndMesssage(50, "GOOD", rail);
+                addScoreAndMesssage("good", rail);
             }
 
             if (singleNote?.index === playState.oldestNote?.index) {
@@ -306,12 +346,26 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
         });
     });
 
-    // #endregion
+    const JUMP_TIME = 0.1;
+    const BACK_TIME = 0.1;
 
-    player.animate("scale", [k.vec2(1, 1), k.vec2(1.2, 1.1)], {
-        duration: 60 / songData.bpm,
-        direction: "ping-pong",
+    musicManager.onBeat(() => {
+        k.tween(k.vec2(1.05, 1.15), k.vec2(1, 1), JUMP_TIME, (v) => {
+            player.scaleX = v.x;
+            player.scaleY = v.y;
+            player.updateScale();
+        });
+
+        k.wait(BACK_TIME, () => {
+            k.tween(k.vec2(1, 1), k.vec2(1.05, 1.1), JUMP_TIME, (v) => {
+                player.scaleX = v.x;
+                player.scaleY = v.y;
+                player.updateScale();
+            });
+        });
     });
+
+    // #endregion
 
     // #region Mobile Input
     if (gameData.debug || k.isTouchscreen()) {
