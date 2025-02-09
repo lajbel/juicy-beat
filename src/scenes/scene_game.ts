@@ -55,7 +55,9 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
 
     musicManager.start();
 
-    k.add(createBackground({ color: "#ee8fcb" }));
+    k.add([
+        k.sprite("background_pink"),
+    ]);
 
     // #region AUTO mode text
     if (autoMode) {

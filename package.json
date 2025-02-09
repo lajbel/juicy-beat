@@ -1,12 +1,13 @@
 {
   "name": "juicy-beat",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "scripts": {
     "build": "esbuild --bundle src/main.ts --outfile=public/game.js",
     "dev": "esbuild --bundle src/main.ts --outfile=public/game.js --servedir=public/ --sourcemap",
     "serve": "esbuild --servedir=.",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "publishin": "bin/butler push public lajbel/juicy-beat:html"
   },
   "dependencies": {
     "dprint": "^0.45.0",

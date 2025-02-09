@@ -1,6 +1,10 @@
 import { k } from "./engine.js";
 import { loadTJA } from "./util.js";
 
+// #region Backgrounds
+k.loadSprite("background_pink", "sprites/backgrounds/pink.png");
+// #endregion
+
 // Sprites
 k.loadSprite("logo", "sprites/images/logo.png");
 k.loadSprite("star", "sprites/images/star.png");

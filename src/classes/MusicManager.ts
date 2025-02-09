@@ -104,6 +104,7 @@ export class MusicManager {
     start() {
         const musicOffset = this.song.offset >= 0 ? this.song.offset : 0;
         const notesOffset = this.song.offset < 0 ? -this.song.offset : 0;
+        let curBeatTime = 0;
 
         // wait for song audio to start...
         this._startSongWait = k.wait(musicOffset + timeForHit(), () => {
@@ -135,6 +136,7 @@ export class MusicManager {
                     this.getMsPerBeat(),
                 );
                 this._curBeat++;
+                curBeatTime += this.getMsPerBeat();
             };
 
             const nextNote = () => {
@@ -156,13 +158,16 @@ export class MusicManager {
                 this._curNote++;
             };
 
+            nextBeat();
+            nextMeasure();
+
             // #region Song Loop
             k.onUpdate(() => {
                 if (this._ended) return;
 
                 this._curTime += k.dt() * 1000;
 
-                if (this._curTime >= this.getMsPerBeat() * this._curBeat) {
+                if (this._curTime >= curBeatTime + this.getMsPerBeat()) {
                     nextBeat();
                 }
 
