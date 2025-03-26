@@ -1,4 +1,3 @@
-import { moreKeysPlugin } from "kaboom-extra";
 import kaplay from "kaplay";
 import { GameData } from "./classes/GameData.js";
 
@@ -11,7 +10,7 @@ export const k = kaplay({
     letterbox: true,
     font: "happy",
     background: [0, 0, 0],
-    plugins: [moreKeysPlugin],
+    plugins: [],
     pixelDensity: 1,
     global: false,
     debug: devMode,
