@@ -4,7 +4,7 @@ import { HITPOINT_DISTANCE } from "../config.js";
 import { k } from "../engine.js";
 import { hitPointObj } from "../objects/play/obj_hit_point.js";
 import { addBars } from "../objects/play/obj_measure_bars.js";
-import { makePlayer } from "../objects/play/obj_player.js";
+import { addPlayer } from "../objects/play/obj_player.js";
 import type { Song } from "../types.js";
 
 k.scene("editor", (sceneData, songData: Song) => {
@@ -25,7 +25,7 @@ k.scene("editor", (sceneData, songData: Song) => {
         k.anchor("center"),
     ]);
 
-    k.add(makePlayer());
+    k.add(addPlayer());
 
     noteHitPoints.add(hitPointObj(k.vec2(-HITPOINT_DISTANCE, 0)));
     noteHitPoints.add(hitPointObj(k.vec2(0, -HITPOINT_DISTANCE)));

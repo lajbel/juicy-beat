@@ -3,9 +3,9 @@ import { loadTJA } from "./util.js";
 
 // #region Backgrounds
 k.loadSprite("background_pink", "sprites/backgrounds/pink.png");
+k.loadSprite("overlay_pink", "sprites/backgrounds/pink-overlay.png");
 // #endregion
 
-// Sprites
 k.loadSprite("logo", "sprites/images/logo.png");
 k.loadSprite("star", "sprites/images/star.png");
 k.loadSprite("life", "sprites/images/life.png");
@@ -36,17 +36,25 @@ k.loadAseprite(
     "sprites/notes_skin/note_slider.json",
 );
 
-// Player skins
+// #region Player skins
 k.loadSprite("bean", "sprites/players_skin/bean.png");
 k.loadSprite("bag", "sprites/players_skin/bag.png");
 k.loadSprite("bobo", "sprites/players_skin/bobo.png");
 k.loadSprite("egg", "sprites/players_skin/egg.png");
 k.loadSprite("pineapple", "sprites/players_skin/pineapple.png");
+
 k.loadAseprite(
     "juicy",
     "sprites/players_skin/juicy.png",
     "sprites/players_skin/juicy.json",
 );
+
+k.loadAseprite(
+    "kocola",
+    "sprites/players_skin/kocola.png",
+    "sprites/players_skin/kocola.json",
+);
+// #endregion
 
 // Sounds
 k.loadSound("slice", "sounds/effects/slice.mp3");

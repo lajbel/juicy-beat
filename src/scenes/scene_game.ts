@@ -1,17 +1,15 @@
 import type { AudioPlay, GameObj } from "kaplay";
-import { lerp } from "kaplay/dist/declaration/math/math.js";
 import { MusicManager } from "../classes/MusicManager.js";
 import { PlayState } from "../classes/PlayState.js";
 import { SceneState } from "../classes/SceneState.js";
+import { individualScale } from "../components/comp_individualScale.js";
 import { HITPOINT_DISTANCE, NOTES_SPEED } from "../config.js";
 import { gameData, k } from "../engine.js";
-import { createBackground } from "../objects/common/obj_background.js";
 import { createObj } from "../objects/common/obj_base.js";
 import { hitPointObj } from "../objects/play/obj_hit_point";
-import { addBars } from "../objects/play/obj_measure_bars.js";
 import { addSingle, type SingleGameObj } from "../objects/play/obj_note";
 import { makePlayInfoObj } from "../objects/play/obj_play_info";
-import { makePlayer } from "../objects/play/obj_player.js";
+import { addPlayer } from "../objects/play/obj_player.js";
 import { addSongIntro } from "../objects/play/obj_song_titles.js";
 import { makeSwordObj } from "../objects/play/obj_sword";
 import type { Rail, Song } from "../types";
@@ -59,6 +57,12 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
         k.sprite("background_pink"),
     ]);
 
+    const overlay = k.add([
+        k.sprite("overlay_pink"),
+        k.scale(1),
+        individualScale(),
+    ]);
+
     // #region AUTO mode text
     if (autoMode) {
         k.add([
@@ -70,7 +74,7 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
     }
     // #endregion
 
-    const player = k.add(makePlayer());
+    const player = addPlayer();
     const sword = player.add(makeSwordObj());
     const playInfo = k.add(makePlayInfoObj());
 
@@ -365,6 +369,21 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
                 player.updateScale();
             });
         });
+
+        // Overlay Animation
+        k.tween(k.vec2(1.05, 1.15), k.vec2(1, 1), JUMP_TIME, (v) => {
+            overlay.scaleX = v.x;
+            overlay.scaleY = v.y;
+            overlay.updateScale();
+        });
+
+        k.wait(BACK_TIME, () => {
+            k.tween(k.vec2(1, 1), k.vec2(1.05, 1.1), JUMP_TIME, (v) => {
+                overlay.scaleX = v.x;
+                overlay.scaleY = v.y;
+                overlay.updateScale();
+            });
+        });
     });
 
     // #endregion
@@ -421,6 +440,7 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
     }
     // #endregion
 
+    // #endregion
     // Start the game
     startPlay(songData);
 });

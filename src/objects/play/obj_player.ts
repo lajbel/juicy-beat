@@ -12,8 +12,8 @@ const ANIM_FRAMES = [
     [4, 5],
 ];
 
-export const makePlayer = () => {
-    const obj = k.make([
+export const addPlayer = () => {
+    const obj = k.add([
         k.sprite(gameData.player.skin),
         k.pos(k.center().add(0, 40)),
         k.anchor("bot"),

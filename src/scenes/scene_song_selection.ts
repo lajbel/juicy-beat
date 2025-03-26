@@ -94,6 +94,13 @@ k.scene("song_selection", (sceneData) => {
             gameData.setSetting("demoMusic", !gameData.settings.demoMusic);
         }
 
+        if (k.isKeyPressed("1")) {
+            gameData.setPlayerSetting("skin", "juicy");
+        }
+        if (k.isKeyPressed("2")) {
+            gameData.setPlayerSetting("skin", "kocola");
+        }
+
         demoSongVolume = gameData.settings.demoMusic ? 0.5 : 0;
         if (demoSong?.volume) demoSong.volume = demoSongVolume;
     });
