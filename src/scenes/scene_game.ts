@@ -6,7 +6,7 @@ import { individualScale } from "../components/comp_individualScale.js";
 import { HITPOINT_DISTANCE, NOTES_SPEED } from "../config.js";
 import { gameData, k } from "../engine.js";
 import { createObj } from "../objects/common/obj_base.js";
-import { hitPointObj } from "../objects/play/obj_hit_point";
+import { addHitPoint } from "../objects/play/obj_hit_point";
 import { addSingle, type SingleGameObj } from "../objects/play/obj_note";
 import { makePlayInfoObj } from "../objects/play/obj_play_info";
 import { addPlayer } from "../objects/play/obj_player.js";
@@ -75,7 +75,6 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
     // #endregion
 
     const player = addPlayer();
-    const sword = player.add(makeSwordObj());
     const playInfo = k.add(makePlayInfoObj());
 
     const noteHitPoints = k.add([
@@ -83,9 +82,9 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
         k.anchor("center"),
     ]);
 
-    noteHitPoints.add(hitPointObj(k.vec2(-HITPOINT_DISTANCE, 0)));
-    noteHitPoints.add(hitPointObj(k.vec2(0, -HITPOINT_DISTANCE)));
-    noteHitPoints.add(hitPointObj(k.vec2(HITPOINT_DISTANCE, 0)));
+    noteHitPoints.add(addHitPoint(k.vec2(-HITPOINT_DISTANCE, 0)));
+    noteHitPoints.add(addHitPoint(k.vec2(0, -HITPOINT_DISTANCE)));
+    noteHitPoints.add(addHitPoint(k.vec2(HITPOINT_DISTANCE, 0)));
 
     const railPoints = k.add(createObj({
         pos: k.center(),
@@ -196,9 +195,6 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
                 && note.state === "active";
         })[0] as SingleGameObj;
 
-        // Sword animation
-        sword.hit(rail);
-
         if (gameData.debug) {
             hitPoint.use(k.color(k.RED));
             hitPoint.use(k.opacity(1));
@@ -222,6 +218,7 @@ k.scene("game", (sceneData, songData, opt: PlaySceneOpt = {
             return;
         }
 
+        hitPoint.hit();
         hittedNote.enterState("hit");
     }
     // #endregion

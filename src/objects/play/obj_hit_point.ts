@@ -20,7 +20,7 @@ const STARS_GOTO = [
     k.vec2(100, 0),
 ];
 
-export const hitPointObj = (pos: Vec2) => {
+export const addHitPoint = (pos: Vec2) => {
     const noteHitPoint = k.make([
         k.pos(pos),
         k.z(50),
@@ -32,6 +32,22 @@ export const hitPointObj = (pos: Vec2) => {
             shape: new k.Rect(k.vec2(0), HIT_POINT_SIZE, HIT_POINT_SIZE),
         }),
         {
+            hit(this: GameObj) {
+                const swordSlice = this.add([
+                    k.sprite("sword_slice"),
+                    k.anchor("center"),
+                    k.layer("ui"),
+                ]);
+
+                swordSlice.play("Slice", {
+                    speed: 60,
+                    loop: false,
+                });
+
+                swordSlice.onAnimEnd(() => {
+                    swordSlice.destroy();
+                });
+            },
             greatHit(this: GameObj) {
                 for (let i = 0; i < 3; i++) {
                     const hitParticle = this.add([

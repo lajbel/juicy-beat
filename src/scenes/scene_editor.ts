@@ -2,7 +2,7 @@ import { MusicManager } from "../classes/MusicManager.js";
 import { SceneState } from "../classes/SceneState.js";
 import { HITPOINT_DISTANCE } from "../config.js";
 import { k } from "../engine.js";
-import { hitPointObj } from "../objects/play/obj_hit_point.js";
+import { addHitPoint } from "../objects/play/obj_hit_point.js";
 import { addBars } from "../objects/play/obj_measure_bars.js";
 import { addPlayer } from "../objects/play/obj_player.js";
 import type { Song } from "../types.js";
@@ -27,9 +27,9 @@ k.scene("editor", (sceneData, songData: Song) => {
 
     k.add(addPlayer());
 
-    noteHitPoints.add(hitPointObj(k.vec2(-HITPOINT_DISTANCE, 0)));
-    noteHitPoints.add(hitPointObj(k.vec2(0, -HITPOINT_DISTANCE)));
-    noteHitPoints.add(hitPointObj(k.vec2(HITPOINT_DISTANCE, 0)));
+    noteHitPoints.add(addHitPoint(k.vec2(-HITPOINT_DISTANCE, 0)));
+    noteHitPoints.add(addHitPoint(k.vec2(0, -HITPOINT_DISTANCE)));
+    noteHitPoints.add(addHitPoint(k.vec2(HITPOINT_DISTANCE, 0)));
 
     // #region Song Progress
     let isPlaying = false;

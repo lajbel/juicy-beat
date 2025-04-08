@@ -13,6 +13,11 @@ k.loadSprite("fail", "sprites/images/fail.png");
 
 k.loadSprite("sword", "sprites/sword.png");
 k.loadSprite("sword_cut", "sprites/sword_cut.png");
+k.loadAseprite(
+    "sword_slice",
+    "sprites/effects/sword_slice.png",
+    "sprites/effects/sword_slice.json",
+);
 k.loadSprite("apple_break", "sprites/apple_break.png");
 k.loadAseprite(
     "green_apple",

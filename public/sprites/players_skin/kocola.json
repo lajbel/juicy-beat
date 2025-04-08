@@ -1,6 +1,6 @@
 { "frames": [
    {
-    "filename": "kocola 0.aseprite",
+    "filename": "Kocola sprites remake 0.aseprite",
     "frame": { "x": 0, "y": 0, "w": 104, "h": 104 },
     "rotated": false,
     "trimmed": false,
@@ -9,7 +9,7 @@
     "duration": 100
    },
    {
-    "filename": "kocola 1.aseprite",
+    "filename": "Kocola sprites remake 1.aseprite",
     "frame": { "x": 104, "y": 0, "w": 104, "h": 104 },
     "rotated": false,
     "trimmed": false,
@@ -18,7 +18,7 @@
     "duration": 100
    },
    {
-    "filename": "kocola 2.aseprite",
+    "filename": "Kocola sprites remake 2.aseprite",
     "frame": { "x": 208, "y": 0, "w": 104, "h": 104 },
     "rotated": false,
     "trimmed": false,
@@ -27,7 +27,7 @@
     "duration": 100
    },
    {
-    "filename": "kocola 3.aseprite",
+    "filename": "Kocola sprites remake 3.aseprite",
     "frame": { "x": 312, "y": 0, "w": 104, "h": 104 },
     "rotated": false,
     "trimmed": false,
@@ -36,7 +36,7 @@
     "duration": 100
    },
    {
-    "filename": "kocola 4.aseprite",
+    "filename": "Kocola sprites remake 4.aseprite",
     "frame": { "x": 416, "y": 0, "w": 104, "h": 104 },
     "rotated": false,
     "trimmed": false,
@@ -45,7 +45,7 @@
     "duration": 100
    },
    {
-    "filename": "kocola 5.aseprite",
+    "filename": "Kocola sprites remake 5.aseprite",
     "frame": { "x": 520, "y": 0, "w": 104, "h": 104 },
     "rotated": false,
     "trimmed": false,
@@ -65,7 +65,7 @@
    { "name": "final", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
-   { "name": "kocola", "opacity": 255, "blendMode": "normal" }
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
   ],
   "slices": [
   ]
